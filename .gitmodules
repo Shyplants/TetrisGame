@@ -1,0 +1,3 @@
+[submodule "ShyplantsEngine"]
+	path = ShyplantsEngine
+	url = https://github.com/Shyplants/ShyplantsEngine.git
