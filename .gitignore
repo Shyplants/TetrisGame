@@ -1,0 +1,35 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+
+# Build directories
+Debug/
+Release/
+x64/
+bin/
+binaries/
+build/
+out/
+
+# Intermediate directories
+ipch/
+*.obj
+*.pch
+*.pdb
+*.idb
+*.ilk
+*.dll
+*.exe
+*.log
+
+# DirectX shader outputs
+*.cso
+*.pso
+
+# Generated
+*.aps
+
+# Etc
+Thumbs.db
+*.DS_Store
