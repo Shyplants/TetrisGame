@@ -29,13 +29,6 @@ void TetrisBoardActor::OnSpawned()
 	m_renderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/White.png").get());
 
 	// Test
-	m_cells[0] = TetrominoType::I;
-	m_cells[5] = TetrominoType::O;
-	m_cells[9] = TetrominoType::T;
-
-	m_cells[10] = TetrominoType::I;
-	m_cells[15] = TetrominoType::O;
-	m_cells[19] = TetrominoType::T;
 
 	m_cells[220] = TetrominoType::I;
 	// m_cells[225] = TetrominoType::O;
@@ -54,32 +47,27 @@ TetrominoType TetrisBoardActor::Get(int32 x, int32 y) const
 	return m_cells[pos2Idx(x, y)];
 }
 
-bool TetrisBoardActor::IsCollide(const TetrominoActor& t, int32 dx, int32 dy, Rotation rot) const
+bool TetrisBoardActor::IsCollide(const TetrominoActor& t, int32 dx, int32 dy) const
 {
-	auto type = t.GetType();
-	auto blocks = t.GetRotBlocks(rot);
+	auto blocks = t.GetCurrentWorldBlocks();
 
-	int32 baseX = t.GetX() + dx;
-	int32 baseY = t.GetY() + dy;
-
-	for (auto& block : blocks)
-	{
-		int32 x = baseX + static_cast<int32>(block.x);
-		int32 y = baseY + static_cast<int32>(block.y);
-
-		if (OOB(x, y) || Get(x, y) != TetrominoType::None)
-			return true;
-	}
-
-	return false;
+	return IsCollide(blocks, dx, dy);
 }
 
-bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& t) const
+bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& blocks, XMFLOAT2 offset) const
 {
-	for (auto& pos : t)
+	int32 dx = static_cast<int32>(offset.x);
+	int32 dy = static_cast<int32>(offset.y);
+
+	return IsCollide(blocks, dx, dy);
+}
+
+bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& blocks, int32 dx, int32 dy) const
+{
+	for (auto& block : blocks)
 	{
-		int32 x = static_cast<int32>(pos.x);
-		int32 y = static_cast<int32>(pos.y);
+		int32 x = static_cast<int32>(block.x) + dx;
+		int32 y = static_cast<int32>(block.y) + dy;
 
 		if (OOB(x, y) || Get(x, y) != TetrominoType::None)
 			return true;
@@ -91,7 +79,7 @@ bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& t) const
 void TetrisBoardActor::Lock(const TetrominoActor& t)
 {
 	auto type = t.GetType();
-	auto blocks = t.GetCurBlocks();
+	auto blocks = t.GetCurrentBlocks();
 
 	for (auto& block : blocks)
 	{

@@ -42,7 +42,7 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     // XMMATRIX actorWorld = sc->GetWorldMatrix();
 
     auto* tetro = static_cast<TetrominoActor*>(GetOwner());
-    auto blocks = tetro->GetCurBlocks();
+    auto blocks = tetro->GetCurrentBlocks();
     Vector2 pos = tetro->GetPos();
 
     const float cellSize = 32.0f;

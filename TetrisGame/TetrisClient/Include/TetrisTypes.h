@@ -43,6 +43,17 @@ inline Rotation NextCCW(Rotation r)
     return Rotation::R0;
 }
 
+inline Rotation NextRotation(Rotation cur, Rotation theta, bool cw)
+{
+    int32 c = static_cast<int32>(cur);
+    int32 t = static_cast<int32>(theta);
+    t *= (cw ? 1 : -1);
+
+    int32 next = (c + t + 4) % 4;
+
+    return static_cast<Rotation>(next);
+}
+
 // ¿òÁ÷ÀÓ
 enum class MoveDir : int32
 {

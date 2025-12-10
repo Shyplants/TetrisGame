@@ -30,11 +30,13 @@ public:
 
 	void Rotate(bool cw);
 
-	// 현재 회전 상태의 4블록 상대 좌표 반환
-	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetCurBlocks() const;
+	// 상대 좌표
+	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetCurrentBlocks() const;
+	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetRelativeRotatedBlocks(Rotation theta, bool cw = true) const;
 
-	// 회전한 상태의 4블록 상대 좌표 반환
-	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetRotBlocks(Rotation rot) const;
+	// 절대 좌표
+	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetCurrentWorldBlocks() const;
+	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetRelativeRotatedWorldBlocks(Rotation theta, bool cw = true) const;
 
 	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 

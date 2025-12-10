@@ -71,30 +71,38 @@ void TetrominoActor::Rotate(bool cw)
 	m_rotation = cw ? NextCW(m_rotation) : NextCCW(m_rotation);
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurBlocks() const
+std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurrentBlocks() const
 {
-	if (m_type == TetrominoType::None)
-	{
-		// TODO : Log
-		return std::array<Vector2, MINO_COUNT>();
-	}
-
-	size_t typeIndex = static_cast<size_t>(m_type) - 1;
-	size_t rotIndex = static_cast<size_t>(m_rotation);
-	return TetrisRules::Shapes[typeIndex][rotIndex];
+	return TetrisRules::GetShapeBlocks(m_type, m_rotation);
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetRotBlocks(Rotation rot) const
+std::array<Vector2, MINO_COUNT> TetrominoActor::GetRelativeRotatedBlocks(Rotation theta, bool cw) const
 {
-	if (m_type == TetrominoType::None)
-	{
-		// TODO : Log
-		return std::array<Vector2, MINO_COUNT>();
-	}
+	auto rot = NextRotation(m_rotation, theta, cw);
 
-	size_t typeIndex = static_cast<size_t>(m_type) - 1;
-	size_t rotIndex = static_cast<size_t>(rot);
-	return TetrisRules::Shapes[typeIndex][rotIndex];
+	return TetrisRules::GetShapeBlocks(m_type, rot);
+}
+
+std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurrentWorldBlocks() const
+{
+	auto blocks = GetCurrentBlocks();
+	auto pos = GetPos();
+
+	for (auto& block : blocks)
+		block += pos;
+
+	return blocks;
+}
+
+std::array<Vector2, MINO_COUNT> TetrominoActor::GetRelativeRotatedWorldBlocks(Rotation theta, bool cw) const
+{
+	auto blocks = GetRelativeRotatedBlocks(theta, cw);
+	auto pos = GetPos();
+
+	for (auto& b : blocks)
+		b += pos;
+
+	return blocks;
 }
 
 void TetrominoActor::SetRenderOffset(const XMFLOAT2& offset)

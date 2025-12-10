@@ -27,9 +27,9 @@ public:
 	// 셀 접근
 	TetrominoType Get(int32 x, int32 y) const;
 
-	// 미노를 이동/회전 했을 때 충돌하는지 여부 반환
-	bool IsCollide(const TetrominoActor& t, int32 dx = 0, int32 dy = 0, Rotation rot = Rotation::R0) const;
-	bool IsCollide(const std::array<DirectX::SimpleMath::Vector2, MINO_COUNT>& t) const;
+	// 미노를 이동 했을 때 충돌하는지 여부 반환
+	bool IsCollide(const TetrominoActor& t, int32 dx = 0, int32 dy = 0) const;
+	bool IsCollide(const std::array<DirectX::SimpleMath::Vector2, MINO_COUNT>& blocks, DirectX::XMFLOAT2 offset) const;
 
 	// 미노를 보드에 고정
 	void Lock(const TetrominoActor& t);
@@ -40,6 +40,8 @@ public:
 	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 
 private:
+	bool IsCollide(const std::array<DirectX::SimpleMath::Vector2, MINO_COUNT>& blocks, int32 dx, int32 dy) const;
+
 	// Cell Management
 	void Set(int32 x, int32 y, TetrominoType type);
 

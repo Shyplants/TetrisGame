@@ -201,11 +201,9 @@ bool TetrisGameMode::TryRotate(bool cw)
 	bool ret = false;
 
 	Vector2 shouldOffset{};
-	auto curRot = m_currentMino->GetRotation();
-	auto nextRot = cw ? NextCW(curRot) : NextCCW(curRot);
-	auto rotatedBlock = m_currentMino->GetRotBlocks(nextRot);
-	for (auto& block : rotatedBlock)
-		block = block + m_currentMino->GetPos();
+	auto curRotIdx = static_cast<size_t>(m_currentMino->GetRotation());
+	auto nextRotIdx = static_cast<size_t>(NextRotation(m_currentMino->GetRotation(), Rotation::R90, cw));
+	auto rotatedBlocks = m_currentMino->GetRelativeRotatedWorldBlocks(Rotation::R90, cw);
 
 	switch (m_currentMino->GetType())
 	{
@@ -219,13 +217,9 @@ bool TetrisGameMode::TryRotate(bool cw)
 
 			for (int32 i = 0; i < JLSTZ_OFFSET_COUNT; ++i)
 			{
-				auto offset = offsetData[static_cast<size_t>(curRot)][i] - offsetData[static_cast<size_t>(nextRot)][i];
-				auto testBlocks = rotatedBlock;
+				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 				
-				for (int32 j = 0; j < MINO_COUNT; ++j)
-					testBlocks[j] += offset;
-
-				if (!m_board->IsCollide(testBlocks))
+				if (!m_board->IsCollide(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
@@ -241,13 +235,9 @@ bool TetrisGameMode::TryRotate(bool cw)
 
 			for (int32 i = 0; i < I_OFFSET_COUNT; ++i)
 			{
-				auto offset = offsetData[static_cast<size_t>(curRot)][i] - offsetData[static_cast<size_t>(nextRot)][i];
-				auto testBlocks = rotatedBlock;
+				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 
-				for (int32 j = 0; j < MINO_COUNT; ++j)
-					testBlocks[j] += offset;
-
-				if (!m_board->IsCollide(testBlocks))
+				if (!m_board->IsCollide(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
@@ -264,13 +254,9 @@ bool TetrisGameMode::TryRotate(bool cw)
 
 			for (int32 i = 0; i < O_OFFSET_COUNT; ++i)
 			{
-				auto offset = offsetData[static_cast<size_t>(curRot)][i] - offsetData[static_cast<size_t>(nextRot)][i];
-				auto testBlocks = rotatedBlock;
+				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 
-				for (int32 j = 0; j < MINO_COUNT; ++j)
-					testBlocks[j] += offset;
-
-				if (!m_board->IsCollide(testBlocks))
+				if (!m_board->IsCollide(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
