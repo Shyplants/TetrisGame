@@ -46,18 +46,15 @@ void TetrisLevel::OnBeginPlay()
 
     // º¸µå »ý¼º
     auto board = world->SpawnActor<TetrisBoardActor>();
-    board->GetRootComponent()->SetLocalPosition({ -160.0f, -368.0f, 0.0f });
-
-    // ·»´õ¸µ ÄÄÆ÷³ÍÆ® ºÎÂø
-    auto boardRenderer = board->AddComponent<BoardRendererComponent>(board);
-    boardRenderer->SetBoard(board);
-    boardRenderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/White.png").get());
 
     // GameMode¿¡ Àü´Þ
     auto gameMode = world->GetGameMode<TetrisGameMode>();
     assert(gameMode && "gameMode is not valid!");
 
+    DirectX::XMFLOAT2 renderOffset = { -160.0f, -368.0f };
+
     gameMode->SetBoard(board);
+    gameMode->SetRenderOffset(renderOffset);
     gameMode->StartGame();
 }
 

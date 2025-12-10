@@ -9,6 +9,7 @@
 #include "TetrisTypes.h"
 
 class TetrominoActor;
+class BoardRendererComponent;
 
 class TetrisBoardActor : public Actor
 {
@@ -36,6 +37,8 @@ public:
 	// 가득 찬 라인 제거 및 위에서 당기기. 제거한 라인 수 반환
 	int32 ClearFullLines();
 
+	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
+
 private:
 	// Cell Management
 	void Set(int32 x, int32 y, TetrominoType type);
@@ -44,6 +47,9 @@ private:
 	bool OOB(int32 x, int32 y) const { return x < 0 || x >= m_width || y < 0 || y >= m_height; }
 	int32 pos2Idx(int32 x, int32 y) const;
 
+
+private:
+	BoardRendererComponent* m_renderer{ nullptr };
 
 private:
 	int32 m_width{ BOARD_WIDTH }, m_height{ BOARD_HEIGHT };

@@ -36,6 +36,7 @@ public:
 	// 회전한 상태의 4블록 상대 좌표 반환
 	std::array<DirectX::SimpleMath::Vector2, MINO_COUNT> GetRotBlocks(Rotation rot) const;
 
+	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 
 private:
 	TetrominoType m_type{ TetrominoType::None };

@@ -8,6 +8,7 @@
 #include "TetrisRules.h"
 #include "Components/Renderer/TetrominoRendererComponent.h"
 
+using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 TetrominoActor::TetrominoActor(TetrominoType type)
@@ -94,4 +95,10 @@ std::array<Vector2, MINO_COUNT> TetrominoActor::GetRotBlocks(Rotation rot) const
 	size_t typeIndex = static_cast<size_t>(m_type) - 1;
 	size_t rotIndex = static_cast<size_t>(rot);
 	return TetrisRules::Shapes[typeIndex][rotIndex];
+}
+
+void TetrominoActor::SetRenderOffset(const XMFLOAT2& offset)
+{
+	if (m_renderer)
+		m_renderer->SetRenderOffset(offset);
 }

@@ -17,6 +17,7 @@ public:
 
 public:
 	void SetBoard(TetrisBoardActor* board) { m_board = board; }
+	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 	void StartGame();
 
 private:
@@ -38,4 +39,6 @@ private:
 	float m_fallInterval{ 0.5f };
 
 	bool m_isGameOver{ false };
+
+	DirectX::XMFLOAT2 m_renderOffset = { 0.f, 0.f };
 };

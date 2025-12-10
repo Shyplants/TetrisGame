@@ -39,7 +39,7 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 	if (!sc)
 		return;
 
-	XMMATRIX boardWorld = sc->GetWorldMatrix();
+	// XMMATRIX boardWorld = sc->GetWorldMatrix();
 
 	const int32 width = m_board->GetWidth();
 	const int32 height = m_board->GetHeight();
@@ -56,13 +56,13 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 				continue;
 
 			// 셀 위치를 월드 좌표로 변환
-			float worldX = static_cast<float>(x) * cellSize;
-			float worldY = static_cast<float>(y) * cellSize;
+			float worldX = static_cast<float>(x) * cellSize + m_renderOffset.x;
+			float worldY = static_cast<float>(y) * cellSize + m_renderOffset.y;
 
 			XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
 			XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
 
-			XMMATRIX world = S * T * boardWorld;
+			XMMATRIX world = S * T;
 			XMMATRIX wvp = world * viewProj;
 
 			DrawCommand dc = {};

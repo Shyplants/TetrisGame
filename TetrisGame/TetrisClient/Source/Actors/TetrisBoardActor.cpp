@@ -2,6 +2,11 @@
 #include "Actors/TetrisBoardActor.h"
 #include "Actors/TetrominoActor.h"
 
+#include "Components/Renderer/BoardRendererComponent.h"
+#include "Engine/Resource/ResourceManager.h"
+#include "Engine/Resource/Texture/Texture.h"
+
+using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 TetrisBoardActor::TetrisBoardActor(int32 width, int32 height)
@@ -19,6 +24,10 @@ TetrisBoardActor::~TetrisBoardActor()
 
 void TetrisBoardActor::OnSpawned()
 {
+	m_renderer = AddComponent<BoardRendererComponent>(this);
+	m_renderer->SetBoard(this);
+	m_renderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/White.png").get());
+
 	// Test
 	m_cells[0] = TetrominoType::I;
 	m_cells[5] = TetrominoType::O;
@@ -153,4 +162,12 @@ int32 TetrisBoardActor::pos2Idx(int32 x, int32 y) const
 	}
 
 	return y * m_width + x;
+}
+
+void TetrisBoardActor::SetRenderOffset(const XMFLOAT2& offset)
+{
+	if (m_renderer)
+	{
+		m_renderer->SetRenderOffset(offset);
+	}
 }

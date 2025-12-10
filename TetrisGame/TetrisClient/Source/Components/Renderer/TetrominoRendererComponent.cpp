@@ -39,7 +39,7 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     if (!sc)
         return;
 
-    XMMATRIX actorWorld = sc->GetWorldMatrix();
+    // XMMATRIX actorWorld = sc->GetWorldMatrix();
 
     auto* tetro = static_cast<TetrominoActor*>(GetOwner());
     auto blocks = tetro->GetCurBlocks();
@@ -66,13 +66,13 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     // 블록 4개 렌더링
     for (auto& b : blocks)
     {
-        float worldX = (pos.x + b.x) * cellSize;
-        float worldY = (pos.y + b.y) * cellSize;
+        float worldX = (pos.x + b.x) * cellSize + m_renderOffset.x;
+        float worldY = (pos.y + b.y) * cellSize + m_renderOffset.y;
 
         XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
         XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
 
-        XMMATRIX world = S * T * actorWorld;
+        XMMATRIX world = S * T;
         XMMATRIX wvp = world * viewProj;
 
         DrawCommand dc{};

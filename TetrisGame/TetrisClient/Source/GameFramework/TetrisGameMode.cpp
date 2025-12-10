@@ -41,6 +41,14 @@ void TetrisGameMode::Tick(float deltaTime)
 	UpdateFalling(deltaTime);
 }
 
+void TetrisGameMode::SetRenderOffset(const DirectX::XMFLOAT2& offset)
+{
+	m_renderOffset = offset;
+	
+	if (m_board)
+		m_board->SetRenderOffset(offset);
+}
+
 void TetrisGameMode::StartGame()
 {
 	// 첫 미노 스폰
@@ -58,12 +66,12 @@ void TetrisGameMode::SpawnNextMino()
 	
 	TetrominoType next = m_bag.Pop();
 	m_currentMino = GetWorld()->SpawnActor<TetrominoActor>(next);
-	m_currentMino->AttachToActor(m_board);
 
 	int32 spawnX = m_board->GetWidth() / 2 - 1;
 	int32 spawnY = m_board->GetHeight() - 2;
 
 	m_currentMino->SetPos(spawnX, spawnY);
+	m_currentMino->SetRenderOffset(m_renderOffset);
 
 	if (m_board->IsCollide(*m_currentMino))
 		m_isGameOver = true;
