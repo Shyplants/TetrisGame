@@ -38,6 +38,7 @@ void TetrisGameMode::Tick(float deltaTime)
 	GameMode::Tick(deltaTime);
 
 	HandleInput(deltaTime);
+	UpdateGhostMino();
 	UpdateFalling(deltaTime);
 }
 
@@ -66,12 +67,16 @@ void TetrisGameMode::SpawnNextMino()
 	
 	TetrominoType next = m_bag.Pop();
 	m_currentMino = GetWorld()->SpawnActor<TetrominoActor>(next);
-
+	m_ghostMino = GetWorld()->SpawnActor<TetrominoActor>(next);
+	
 	int32 spawnX = m_board->GetWidth() / 2 - 1;
 	int32 spawnY = m_board->GetHeight() - 2;
 
 	m_currentMino->SetPos(spawnX, spawnY);
 	m_currentMino->SetRenderOffset(m_renderOffset);
+
+	m_ghostMino->SetGhostMode(true);
+	m_ghostMino->SetRenderOffset(m_renderOffset);
 
 	if (m_board->IsCollide(*m_currentMino))
 		m_isGameOver = true;
@@ -163,6 +168,17 @@ void TetrisGameMode::UpdateFalling(float deltaTime)
 		{
 			TryLockMino();
 		}
+	}
+}
+
+void TetrisGameMode::UpdateGhostMino()
+{
+	m_ghostMino->SetPos(m_currentMino->GetPos());
+	m_ghostMino->SetRotation(m_currentMino->GetRotation());
+
+	while (!m_board->IsCollide(*m_ghostMino, 0, -1))
+	{
+		m_ghostMino->Move(0, -1);
 	}
 }
 

@@ -42,8 +42,7 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     // XMMATRIX actorWorld = sc->GetWorldMatrix();
 
     auto* tetro = static_cast<TetrominoActor*>(GetOwner());
-    auto blocks = tetro->GetCurrentBlocks();
-    Vector2 pos = tetro->GetPos();
+    auto blocks = tetro->GetCurrentWorldBlocks();
 
     const float cellSize = 32.0f;
 
@@ -64,10 +63,10 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     }
 
     // 블록 4개 렌더링
-    for (auto& b : blocks)
+    for (auto& block : blocks)
     {
-        float worldX = (pos.x + b.x) * cellSize + m_renderOffset.x;
-        float worldY = (pos.y + b.y) * cellSize + m_renderOffset.y;
+        float worldX = block.x * cellSize + m_renderOffset.x;
+        float worldY = block.y * cellSize + m_renderOffset.y;
 
         XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
         XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);

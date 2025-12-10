@@ -18,7 +18,9 @@ public:
 
 public:
 	TetrominoType GetType() const { return m_type; }
+
 	Rotation GetRotation() const { return m_rotation; }
+	void SetRotation(Rotation rot) { m_rotation = rot; }
 	
 	DirectX::SimpleMath::Vector2 GetPos() const;
 	int32 GetX() const;
@@ -40,9 +42,13 @@ public:
 
 	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 
+	bool IsGhost() const { return m_isGhost; }
+	void SetGhostMode(bool isGhost);
+
 private:
 	TetrominoType m_type{ TetrominoType::None };
 	Rotation m_rotation{ Rotation::R0 };
+	bool m_isGhost{ false };
 
 private:
 	TetrominoRendererComponent* m_renderer{ nullptr };

@@ -110,3 +110,8 @@ void TetrominoActor::SetRenderOffset(const XMFLOAT2& offset)
 	if (m_renderer)
 		m_renderer->SetRenderOffset(offset);
 }
+
+void TetrominoActor::SetGhostMode(bool isGhost)
+{
+	m_isGhost = isGhost;
+}

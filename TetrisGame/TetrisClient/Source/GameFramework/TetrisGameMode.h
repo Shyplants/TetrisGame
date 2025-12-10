@@ -24,6 +24,7 @@ private:
 	void SpawnNextMino();
 	void HandleInput(float deltaTime);
 	void UpdateFalling(float deltaTime);
+	void UpdateGhostMino();
 	void TryLockMino();
 	void ResetCurrentMino();
 	bool TryRotate(bool cw);
@@ -32,6 +33,7 @@ private:
 private:
 	TetrisBoardActor* m_board{ nullptr };
 	TetrominoActor* m_currentMino{ nullptr };
+	TetrominoActor* m_ghostMino{ nullptr };
 
 	TetrisBag m_bag;
 
