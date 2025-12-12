@@ -118,11 +118,11 @@ namespace TetrisRules
 
 	static std::array<Vector2, MINO_COUNT> GetShapeBlocks(TetrominoType type, Rotation rot)
 	{
-		if (type == TetrominoType::None)
+		if (!IsMinoType(type))
 			return {};
 
-		size_t typeIndex = static_cast<size_t>(type) - 1;
-		size_t rotIndex = static_cast<size_t>(rot);
+		auto typeIndex = GetMinoShapeIndex(type);
+		auto rotIndex = static_cast<int32>(rot);
 
 		return Shapes[typeIndex][rotIndex];
 	}

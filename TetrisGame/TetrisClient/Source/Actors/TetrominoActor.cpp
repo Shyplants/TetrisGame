@@ -23,8 +23,8 @@ TetrominoActor::~TetrominoActor()
 
 void TetrominoActor::OnSpawned()
 {
-	m_renderer = AddComponent<TetrominoRendererComponent>(this);
-	m_renderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/White.png").get());
+	m_renderer = AddComponent<TetrominoRendererComponent>();
+	m_renderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 }
 
 Vector2 TetrominoActor::GetPos() const
@@ -37,21 +37,21 @@ Vector2 TetrominoActor::GetPos() const
 
 int32 TetrominoActor::GetX() const
 {
-	auto& pos = GetRootComponent()->GetLocalPosition();
-
+	auto pos = GetRootComponent()->GetLocalPosition();
+	
 	return static_cast<int32>(pos.x);
 }
 
 int32 TetrominoActor::GetY() const
 {
-	auto& pos = GetRootComponent()->GetLocalPosition();
+	auto pos = GetRootComponent()->GetLocalPosition();
 
 	return static_cast<int32>(pos.y);
 }
 
 void TetrominoActor::Move(int32 dx, int32 dy)
 {
-	auto& pos = GetRootComponent()->GetLocalPosition();
+	auto pos = GetRootComponent()->GetLocalPosition();
 	
 	SetPos({ pos.x + static_cast<float>(dx), pos.y + static_cast<float>(dy) });
 }

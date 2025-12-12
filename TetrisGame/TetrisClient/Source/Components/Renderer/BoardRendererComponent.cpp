@@ -39,7 +39,7 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 	if (!sc)
 		return;
 
-	// XMMATRIX boardWorld = sc->GetWorldMatrix();
+	XMMATRIX boardWorld = sc->GetWorldMatrix();
 
 	const int32 width = m_board->GetWidth();
 	const int32 height = m_board->GetHeight();
@@ -50,10 +50,24 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 	{
 		for(int32 x=0; x<width; ++x)
 		{
-			TetrominoType type = m_board->Get(x, y);
-
+			auto type = m_board->Get(x, y);
 			if (type == TetrominoType::None)
 				continue;
+
+			auto tileIndex = GetTileIndex(type);
+
+			float texW = static_cast<float>(m_blockTexture->GetWidth());
+			float texH = static_cast<float>(m_blockTexture->GetHeight());
+
+			float tileW = 32.0f;
+			float tileH = 32.0f;
+			float spacing = 1.0f;
+
+			float u0 = (tileIndex * (tileW + spacing)) / texW;
+			float v0 = 0.0f;
+
+			float uSize = tileW / texW;
+			float vSize = tileH / texH;
 
 			// 셀 위치를 월드 좌표로 변환
 			float worldX = static_cast<float>(x) * cellSize + m_renderOffset.x;
@@ -62,7 +76,7 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 			XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
 			XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
 
-			XMMATRIX world = S * T;
+			XMMATRIX world = S * T * boardWorld;
 			XMMATRIX wvp = world * viewProj;
 
 			DrawCommand dc = {};
@@ -86,20 +100,10 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 			// ConstantBuffer
 			auto& cb = dc.spriteConstantBuffer;
 			cb.WVP = XMMatrixTranspose(wvp);
+			cb.Color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-			switch (type)
-			{
-				case TetrominoType::I: cb.Color = { 0.2f, 0.9f, 1.0f, 1.0f }; break;
-				case TetrominoType::O: cb.Color = { 1.0f, 0.9f, 0.2f, 1.0f }; break;
-				case TetrominoType::T: cb.Color = { 0.8f, 0.3f, 1.0f, 1.0f }; break;
-				case TetrominoType::L: cb.Color = { 1.0f, 0.5f, 0.1f, 1.0f }; break;
-				case TetrominoType::J: cb.Color = { 0.0f, 0.2f, 1.0f, 1.0f }; break;
-				case TetrominoType::S: cb.Color = { 0.2f, 1.0f, 0.2f, 1.0f }; break;
-				case TetrominoType::Z: cb.Color = { 1.0f, 0.2f, 0.2f, 1.0f }; break;
-			}
-
-			cb.TexCoord = { 0.0f, 0.0f };
-			cb.TexSize = { 1.0f, 1.0f };
+			cb.TexCoord = { u0, v0 };
+			cb.TexSize = { uSize, vSize };
 
 			dc.VSConstantBuffer = renderer.GetSpriteVSConstantBuffer();
 			dc.PSTextureSRV = m_blockTexture->GetSRV();

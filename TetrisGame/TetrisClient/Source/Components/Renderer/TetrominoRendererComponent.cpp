@@ -39,28 +39,30 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     if (!sc)
         return;
 
-    // XMMATRIX actorWorld = sc->GetWorldMatrix();
+    auto boardActor = GetOwner()->GetParentActor();
+    auto boardWorld = boardActor->GetRootComponent()->GetWorldMatrix();
 
     auto* tetro = static_cast<TetrominoActor*>(GetOwner());
     auto blocks = tetro->GetCurrentWorldBlocks();
 
     const float cellSize = 32.0f;
 
+    auto type = tetro->IsGhost() ? TetrominoType::Ghost : tetro->GetType();
+    auto tileIndex = GetTileIndex(type);
 
-    auto type = tetro->GetType();
-    Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float texW = static_cast<float>(m_texture->GetWidth());
+    float texH = static_cast<float>(m_texture->GetHeight());
 
-    switch (type)
-    {
-        case TetrominoType::I: color = { 0.2f, 0.9f, 1.0f, 1.0f }; break;
-        case TetrominoType::O: color = { 1.0f, 0.9f, 0.2f, 1.0f }; break;
-        case TetrominoType::T: color = { 0.8f, 0.3f, 1.0f, 1.0f }; break;
-        case TetrominoType::L: color = { 1.0f, 0.5f, 0.1f, 1.0f }; break;
-        case TetrominoType::J: color = { 0.0f, 0.2f, 1.0f, 1.0f }; break;
-        case TetrominoType::S: color = { 0.2f, 1.0f, 0.2f, 1.0f }; break;
-        case TetrominoType::Z: color = { 1.0f, 0.2f, 0.2f, 1.0f }; break;
-        default: break;
-    }
+    float tileW = 32.0f;
+    float tileH = 32.0f;
+    float spacing = 1.0f;
+
+    float u0 = (tileIndex * (tileW + spacing)) / texW;
+    float v0 = 0.0f;
+
+    float uSize = tileW / texW;
+    float vSize = tileH / texH;
+
 
     // 블록 4개 렌더링
     for (auto& block : blocks)
@@ -71,7 +73,7 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
         XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
         XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
 
-        XMMATRIX world = S * T;
+        XMMATRIX world = S * T * boardWorld;
         XMMATRIX wvp = world * viewProj;
 
         DrawCommand dc{};
@@ -90,9 +92,10 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
 
         auto& cb = dc.spriteConstantBuffer;
         cb.WVP = XMMatrixTranspose(wvp);
-        cb.Color = color;
-        cb.TexCoord = { 0.0f, 0.0f };
-        cb.TexSize = { 1.0f, 1.0f };
+        cb.Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+        cb.TexCoord = { u0, v0 };
+        cb.TexSize = { uSize, vSize };
 
         dc.VSConstantBuffer = renderer.GetSpriteVSConstantBuffer();
         dc.PSTextureSRV = m_texture->GetSRV();

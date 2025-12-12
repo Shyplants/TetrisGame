@@ -28,7 +28,7 @@ void TetrisLevel::OnLoad()
 	World* world = GetWorld();
 
 	Actor* camActor = world->SpawnActor<Actor>();
-	auto cam = camActor->AddComponent<CameraComponent2D>(camActor);
+	auto cam = camActor->AddComponent<CameraComponent2D>();
 
     camActor->GetRootComponent()->SetLocalPosition({ 0.0, 0.0f, -10.0f });
     cam->SetZoom(1.0f);
@@ -51,11 +51,12 @@ void TetrisLevel::OnBeginPlay()
     auto gameMode = world->GetGameMode<TetrisGameMode>();
     assert(gameMode && "gameMode is not valid!");
 
-    DirectX::XMFLOAT2 renderOffset = { -160.0f, -368.0f };
+    DirectX::XMFLOAT2 renderOffset = { -160.0f, -320.0f + 2.0f };
 
     gameMode->SetBoard(board);
     gameMode->SetRenderOffset(renderOffset);
-    gameMode->StartGame();
+
+    board->GetRootComponent()->SetLocalPosition({ 60.0f, -200.0f, 0.0f });
 }
 
 void TetrisLevel::Tick(float deltaTime)

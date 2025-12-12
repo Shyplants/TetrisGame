@@ -6,8 +6,32 @@
 enum class TetrominoType : int32
 {
     None = 0,
-    I, O, T, L, J, S, Z
+    I, O, T, L, J, S, Z,
+    Ghost,
+    TEMP_0,
+    TEMP_1,
+    TEMP_2,
+    KillMark
 };
+
+inline int32 GetTileIndex(TetrominoType type)
+{
+    return static_cast<int32>(type) - 1;
+}
+
+inline bool IsMinoType(TetrominoType type)
+{
+    return (type >= TetrominoType::I && type <= TetrominoType::Z);
+}
+
+inline int32 GetMinoShapeIndex(TetrominoType type)
+{
+    if (!IsMinoType(type))
+        return -1;
+
+    return static_cast<int32>(type) - 1;
+}
+
 
 // È¸Àü
 enum class Rotation : int32

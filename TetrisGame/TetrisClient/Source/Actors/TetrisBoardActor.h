@@ -10,6 +10,7 @@
 
 class TetrominoActor;
 class BoardRendererComponent;
+class SpriteRendererComponent;
 
 class TetrisBoardActor : public Actor
 {
@@ -51,7 +52,9 @@ private:
 
 
 private:
-	BoardRendererComponent* m_renderer{ nullptr };
+	BoardRendererComponent* m_cellRenderer{ nullptr };
+	SpriteRendererComponent* m_frameRenderer{ nullptr };
+	SpriteRendererComponent* m_gridRenderer{ nullptr };
 
 private:
 	int32 m_width{ BOARD_WIDTH }, m_height{ BOARD_HEIGHT };

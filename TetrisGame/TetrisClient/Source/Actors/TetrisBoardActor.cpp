@@ -3,6 +3,7 @@
 #include "Actors/TetrominoActor.h"
 
 #include "Components/Renderer/BoardRendererComponent.h"
+#include "Engine/Core/Component/SpriteRendererComponent.h"
 #include "Engine/Resource/ResourceManager.h"
 #include "Engine/Resource/Texture/Texture.h"
 
@@ -24,15 +25,21 @@ TetrisBoardActor::~TetrisBoardActor()
 
 void TetrisBoardActor::OnSpawned()
 {
-	m_renderer = AddComponent<BoardRendererComponent>(this);
-	m_renderer->SetBoard(this);
-	m_renderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/White.png").get());
+	m_cellRenderer = AddComponent<BoardRendererComponent>();
+	m_cellRenderer->SetBoard(this);
+	m_cellRenderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+
+	m_frameRenderer = AddComponent<SpriteRendererComponent>();
+	m_frameRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TetrisBoardFrame.png").get());
+
+	m_gridRenderer = AddComponent<SpriteRendererComponent>();
+	m_gridRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TetrisBoardGrid.png").get());
 
 	// Test
-
+	/*m_cells[0] = TetrominoType::I;
 	m_cells[220] = TetrominoType::I;
-	// m_cells[225] = TetrominoType::O;
-	m_cells[229] = TetrominoType::T;
+	m_cells[225] = TetrominoType::O;
+	m_cells[229] = TetrominoType::T;*/
 }
 
 void TetrisBoardActor::Tick(float deltaTime)
@@ -154,8 +161,8 @@ int32 TetrisBoardActor::pos2Idx(int32 x, int32 y) const
 
 void TetrisBoardActor::SetRenderOffset(const XMFLOAT2& offset)
 {
-	if (m_renderer)
+	if (m_cellRenderer)
 	{
-		m_renderer->SetRenderOffset(offset);
+		m_cellRenderer->SetRenderOffset(offset);
 	}
 }

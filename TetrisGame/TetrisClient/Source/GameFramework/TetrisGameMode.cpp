@@ -62,6 +62,7 @@ void TetrisGameMode::SpawnNextMino()
 	if (m_currentMino)
 	{
 		// TODO : Log
+		int32 d = 0;
 		return;
 	}
 	
@@ -74,9 +75,11 @@ void TetrisGameMode::SpawnNextMino()
 
 	m_currentMino->SetPos(spawnX, spawnY);
 	m_currentMino->SetRenderOffset(m_renderOffset);
+	m_currentMino->AttachToActor(m_board, FAttachmentTransformRules::KeepRelativeTransform);
 
 	m_ghostMino->SetGhostMode(true);
 	m_ghostMino->SetRenderOffset(m_renderOffset);
+	m_ghostMino->AttachToActor(m_board, FAttachmentTransformRules::KeepRelativeTransform);
 
 	if (m_board->IsCollide(*m_currentMino))
 		m_isGameOver = true;
@@ -202,8 +205,14 @@ void TetrisGameMode::ResetCurrentMino()
 {
 	if (m_currentMino)
 	{
-		m_currentMino->MarkForDestroy();
+		m_currentMino->Destroy();
 		m_currentMino = nullptr;
+	}
+
+	if (m_ghostMino)
+	{
+		m_ghostMino->Destroy();
+		m_ghostMino = nullptr;
 	}
 
 	SpawnNextMino();
