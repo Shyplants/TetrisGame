@@ -29,11 +29,41 @@ void TetrisBoardActor::OnSpawned()
 	m_cellRenderer->SetBoard(this);
 	m_cellRenderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 
-	m_frameRenderer = AddComponent<SpriteRendererComponent>();
-	m_frameRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TetrisBoardFrame.png").get());
 
-	m_gridRenderer = AddComponent<SpriteRendererComponent>();
-	m_gridRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TetrisBoardGrid.png").get());
+	auto boardTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/Board.png").get();
+	auto sidePanelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/SidePanel.png").get();
+	auto holdPanelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/HoldPanel.png").get();
+	auto previewPanelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/PreviewPanel.png").get();
+
+	// 보드 본체
+	m_boardRenderer = AddComponent<SpriteRendererComponent>();
+	m_boardRenderer->SetTexture(boardTexture);
+	m_boardRenderer->SetPivot(SpritePivot::Center);
+
+	// 보드 왼쪽
+	{
+		float boardLeftOffsetX = boardTexture->GetWidth() / -2.0f + 4.0f;
+		m_holdPanelRenderer = AddComponent<SpriteRendererComponent>();
+		m_holdPanelRenderer->SetTexture(holdPanelTexture);
+		m_holdPanelRenderer->SetPivot(SpritePivot::TopRight);
+		m_holdPanelRenderer->SetRenderOffset({ boardLeftOffsetX , boardTexture->GetHeight() / 2.0f});
+	}
+
+	// 보드 오른쪽
+	{
+		float boardRightOffsetX = boardTexture->GetWidth() / 2.0f - 4.0f;
+		m_sidePanelRenderer = AddComponent<SpriteRendererComponent>();
+		m_sidePanelRenderer->SetTexture(sidePanelTexture);
+		m_sidePanelRenderer->SetPivot(SpritePivot::MiddleLeft);
+		m_sidePanelRenderer->SetRenderOffset({boardRightOffsetX, 0.0f});
+
+
+		boardRightOffsetX += sidePanelTexture->GetWidth() - 4.0f;
+		m_previewPanelRenderer = AddComponent<SpriteRendererComponent>();
+		m_previewPanelRenderer->SetTexture(previewPanelTexture);
+		m_previewPanelRenderer->SetPivot(SpritePivot::TopLeft);
+		m_previewPanelRenderer->SetRenderOffset({ boardRightOffsetX , boardTexture->GetHeight() / 2.0f});
+	}
 
 	// Test
 	/*m_cells[0] = TetrominoType::I;

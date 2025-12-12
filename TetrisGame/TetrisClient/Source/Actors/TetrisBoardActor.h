@@ -53,8 +53,11 @@ private:
 
 private:
 	BoardRendererComponent* m_cellRenderer{ nullptr };
-	SpriteRendererComponent* m_frameRenderer{ nullptr };
-	SpriteRendererComponent* m_gridRenderer{ nullptr };
+
+	SpriteRendererComponent* m_boardRenderer{ nullptr };
+	SpriteRendererComponent* m_sidePanelRenderer{ nullptr };
+	SpriteRendererComponent* m_holdPanelRenderer{ nullptr };
+	SpriteRendererComponent* m_previewPanelRenderer{ nullptr };
 
 private:
 	int32 m_width{ BOARD_WIDTH }, m_height{ BOARD_HEIGHT };
