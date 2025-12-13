@@ -22,6 +22,7 @@
 
 #include "DirectXMath.h"
 #include "SimpleMath.h"
+#include "Common/Math/MathTypes.h"
 
 // Engine includes
 //#include "Engine/Engine.h"

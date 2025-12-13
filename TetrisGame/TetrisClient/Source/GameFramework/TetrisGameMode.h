@@ -21,19 +21,27 @@ public:
 	void StartGame();
 
 private:
-	void SpawnNextMino();
 	void HandleInput(float deltaTime);
+
 	void UpdateFalling(float deltaTime);
 	void UpdateGhostMino();
-	void TryLockMino();
-	void ResetCurrentMino();
-	bool TryRotate(bool cw);
 
+	bool TryRotateMino(bool cw);
+	bool TryHoldMino();
+	bool TryMoveMino(int32 dx, int32 dy);
+
+	void LockMinoAndProceed();
+
+	void SpawnNextMino();
+	void ResetCurrentMino();
+	
 
 private:
 	TetrisBoardActor* m_board{ nullptr };
 	TetrominoActor* m_currentMino{ nullptr };
 	TetrominoActor* m_ghostMino{ nullptr };
+	
+	TetrominoType m_holdMinoType{ TetrominoType::None };
 
 	TetrisBag m_bag;
 
@@ -41,6 +49,7 @@ private:
 	float m_fallInterval{ 0.5f };
 
 	bool m_isGameOver{ false };
+	bool m_bHasHeldThisTurn{ false };
 
 	DirectX::XMFLOAT2 m_renderOffset = { 0.f, 0.f };
 };

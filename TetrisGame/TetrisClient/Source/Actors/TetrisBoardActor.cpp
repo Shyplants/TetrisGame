@@ -7,6 +7,8 @@
 #include "Engine/Resource/ResourceManager.h"
 #include "Engine/Resource/Texture/Texture.h"
 
+#include "TetrisRules.h"
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -84,29 +86,44 @@ TetrominoType TetrisBoardActor::Get(int32 x, int32 y) const
 	return m_cells[pos2Idx(x, y)];
 }
 
-bool TetrisBoardActor::IsCollide(const TetrominoActor& t, int32 dx, int32 dy) const
-{
-	auto blocks = t.GetCurrentWorldBlocks();
-
-	return IsCollide(blocks, dx, dy);
-}
-
-bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& blocks, XMFLOAT2 offset) const
-{
-	int32 dx = static_cast<int32>(offset.x);
-	int32 dy = static_cast<int32>(offset.y);
-
-	return IsCollide(blocks, dx, dy);
-}
-
-bool TetrisBoardActor::IsCollide(const std::array<Vector2, MINO_COUNT>& blocks, int32 dx, int32 dy) const
+bool TetrisBoardActor::WouldCollideAt(std::array<IVec2, MINO_COUNT> blocks, IVec2 offset) const
 {
 	for (auto& block : blocks)
 	{
-		int32 x = static_cast<int32>(block.x) + dx;
-		int32 y = static_cast<int32>(block.y) + dy;
+		block += offset;
+	}
 
-		if (OOB(x, y) || Get(x, y) != TetrominoType::None)
+	return WouldCollideAt(blocks);
+}
+
+bool TetrisBoardActor::WouldCollideAt(const TetrominoActor& t, int32 dx, int32 dy) const
+{
+	return WouldCollideAt(t.GetType(), t.GetRotation(), t.GetX() + dx, t.GetY() + dy);
+}
+
+bool TetrisBoardActor::WouldCollideAt(TetrominoType type, Rotation rot, int32 baseX, int32 baseY) const
+{
+	auto blocks = TetrisRules::GetShapeBlocks(type, rot);
+
+	for (auto& block : blocks)
+	{
+		block.x += baseX;
+		block.y += baseY;
+	}
+
+	return WouldCollideAt(blocks);
+}
+
+bool TetrisBoardActor::WouldCollideAt(const std::array<IVec2, MINO_COUNT>& blocks) const
+{
+	for (const auto& block : blocks)
+	{
+		// 보드 밖이면 충돌
+		if (OOB(block.x, block.y))
+			return true;
+
+		// 이미 칸이 차있으면 충돌
+		if (Get(block.x, block.y) != TetrominoType::None)
 			return true;
 	}
 

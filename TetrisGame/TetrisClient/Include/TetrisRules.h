@@ -1,15 +1,13 @@
 #pragma once
 
 #include "TetrisTypes.h"
-#include "SimpleMath.h"
+#include "Common/Math/MathTypes.h"
 #include <array>
 
 namespace TetrisRules
 {
-	using DirectX::SimpleMath::Vector2;
-
 	// 각 미노의 4개 블록 상대좌표 (각 회전마다 4개 블록)
-	static constexpr std::array<std::array<std::array<DirectX::SimpleMath::Vector2, MINO_COUNT>, ROTATION_COUNT>, MINO_TYPE_COUNT> 
+	static constexpr std::array<std::array<std::array<IVec2, MINO_COUNT>, ROTATION_COUNT>, MINO_TYPE_COUNT> 
 	Shapes = {{
 		/* I */
 		{{
@@ -68,7 +66,7 @@ namespace TetrisRules
 		}},
 	}};
 
-	static constexpr std::array<std::array< DirectX::SimpleMath::Vector2, JLSTZ_OFFSET_COUNT>, ROTATION_COUNT> 
+	static constexpr std::array<std::array<IVec2, JLSTZ_OFFSET_COUNT>, ROTATION_COUNT>
 	JLSTZ_Offset_Data = {{
 		{{
 			{+0, +0}, {+0, +0}, {+0, +0}, {+0, +0}, {+0, +0},
@@ -84,7 +82,7 @@ namespace TetrisRules
 		}},
 	}};
 
-	static constexpr std::array<std::array< DirectX::SimpleMath::Vector2, I_OFFSET_COUNT>, ROTATION_COUNT> 
+	static constexpr std::array<std::array<IVec2, I_OFFSET_COUNT>, ROTATION_COUNT>
 	I_Offset_Data = {{
 		{{
 			{+0, +0}, {-1, +0}, {+2, +0}, {-1, +0}, {+2, +0},
@@ -100,7 +98,7 @@ namespace TetrisRules
 		}},
 	}};
 
-	static constexpr std::array<std::array< DirectX::SimpleMath::Vector2, O_OFFSET_COUNT>, ROTATION_COUNT> 
+	static constexpr std::array<std::array<IVec2, O_OFFSET_COUNT>, ROTATION_COUNT>
 	O_Offset_Data = {{
 		{{
 			{+0, +0},
@@ -116,7 +114,7 @@ namespace TetrisRules
 		}},
 	}};
 
-	static std::array<Vector2, MINO_COUNT> GetShapeBlocks(TetrominoType type, Rotation rot)
+	static std::array<IVec2, MINO_COUNT> GetShapeBlocks(TetrominoType type, Rotation rot)
 	{
 		if (!IsMinoType(type))
 			return {};

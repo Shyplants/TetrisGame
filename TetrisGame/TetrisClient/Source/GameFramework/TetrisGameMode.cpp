@@ -81,7 +81,7 @@ void TetrisGameMode::SpawnNextMino()
 	m_ghostMino->SetRenderOffset(m_renderOffset);
 	m_ghostMino->AttachToActor(m_board, FAttachmentTransformRules::KeepRelativeTransform);
 
-	if (m_board->IsCollide(*m_currentMino))
+	if (m_board->WouldCollideAt(*m_currentMino, 0, 0))
 		m_isGameOver = true;
 	
 }
@@ -93,39 +93,38 @@ void TetrisGameMode::HandleInput(float deltaTime)
 	// Move Left
 	if (input.IsKeyPressed(KeyCode::Left))
 	{
-		if (!m_board->IsCollide(*m_currentMino, -1, 0))
+		if (TryMoveMino(-1, 0))
 		{
-			m_currentMino->Move(-1, 0);
+
 		}
 	}
 
 	// Move Right
 	if (input.IsKeyPressed(KeyCode::Right))
 	{
-		if (!m_board->IsCollide(*m_currentMino, +1, 0))
+		if (TryMoveMino(+1, 0))
 		{
-			m_currentMino->Move(+1, 0);
+
 		}
 	}
 
 	// Soft Drop
 	if (input.IsKeyPressed(KeyCode::Down))
 	{
-		if (!m_board->IsCollide(*m_currentMino, 0, -1))
+		if (TryMoveMino(0, -1))
 		{
-			m_currentMino->Move(0, -1);
 			m_fallTimer = 0.0f;
 		}
 		else
 		{
-			TryLockMino();
+			LockMinoAndProceed();
 		}
 	}
 
 	// Rotate CW
 	if (input.IsKeyPressed(KeyCode::Up))
 	{
-		if (TryRotate(true))
+		if (TryRotateMino(true))
 		{
 			// TODO
 		}
@@ -134,7 +133,7 @@ void TetrisGameMode::HandleInput(float deltaTime)
 	// Rotate CCW
 	if (input.IsKeyPressed(KeyCode::Z))
 	{
-		if (TryRotate(false))
+		if (TryRotateMino(false))
 		{
 			// TODO
 		}
@@ -143,10 +142,20 @@ void TetrisGameMode::HandleInput(float deltaTime)
 	// Hard Drop
 	if (input.IsKeyPressed(KeyCode::Space))
 	{
-		while (!m_board->IsCollide(*m_currentMino, 0, -1))
+		while (!m_board->WouldCollideAt(*m_currentMino, 0, -1))
 			m_currentMino->Move(0, -1);
 
-		TryLockMino();
+		LockMinoAndProceed();
+	}
+
+	// Hold
+	if (input.IsKeyDown(KeyCode::C))
+	{
+		if (TryHoldMino())
+		{
+			m_fallTimer = 0.0f;
+			UpdateGhostMino();
+		}
 	}
 
 
@@ -163,42 +172,23 @@ void TetrisGameMode::UpdateFalling(float deltaTime)
 	{
 		m_fallTimer = 0.0f;
 
-		if (!m_board->IsCollide(*m_currentMino, 0, -1))
+		if (!TryMoveMino(0, -1))
 		{
-			m_currentMino->Move(0, -1);
-		}
-		else
-		{
-			TryLockMino();
+			LockMinoAndProceed();
 		}
 	}
 }
 
 void TetrisGameMode::UpdateGhostMino()
 {
+	m_ghostMino->SetType(m_currentMino->GetType());
 	m_ghostMino->SetPos(m_currentMino->GetPos());
 	m_ghostMino->SetRotation(m_currentMino->GetRotation());
 
-	while (!m_board->IsCollide(*m_ghostMino, 0, -1))
+	while (!m_board->WouldCollideAt(*m_ghostMino, 0, -1))
 	{
 		m_ghostMino->Move(0, -1);
 	}
-}
-
-void TetrisGameMode::TryLockMino()
-{
-	if (!m_currentMino)
-		return;
-
-	m_board->Lock(*m_currentMino);
-
-	int32 cleared = m_board->ClearFullLines();
-	if (cleared > 0)
-	{
-		GetGameState()->AddScore(cleared * 100);
-	}
-
-	ResetCurrentMino();
 }
 
 void TetrisGameMode::ResetCurrentMino()
@@ -214,18 +204,16 @@ void TetrisGameMode::ResetCurrentMino()
 		m_ghostMino->Destroy();
 		m_ghostMino = nullptr;
 	}
-
-	SpawnNextMino();
 }
 
-bool TetrisGameMode::TryRotate(bool cw)
+bool TetrisGameMode::TryRotateMino(bool cw)
 {
 	if (!m_currentMino)
 		return false;
 
 	bool ret = false;
 
-	Vector2 shouldOffset{};
+	IVec2 shouldOffset{};
 	auto curRotIdx = static_cast<size_t>(m_currentMino->GetRotation());
 	auto nextRotIdx = static_cast<size_t>(NextRotation(m_currentMino->GetRotation(), Rotation::R90, cw));
 	auto rotatedBlocks = m_currentMino->GetRelativeRotatedWorldBlocks(Rotation::R90, cw);
@@ -244,7 +232,7 @@ bool TetrisGameMode::TryRotate(bool cw)
 			{
 				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 				
-				if (!m_board->IsCollide(rotatedBlocks, offset))
+				if (!m_board->WouldCollideAt(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
@@ -262,7 +250,7 @@ bool TetrisGameMode::TryRotate(bool cw)
 			{
 				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 
-				if (!m_board->IsCollide(rotatedBlocks, offset))
+				if (!m_board->WouldCollideAt(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
@@ -281,7 +269,7 @@ bool TetrisGameMode::TryRotate(bool cw)
 			{
 				auto offset = offsetData[curRotIdx][i] - offsetData[nextRotIdx][i];
 
-				if (!m_board->IsCollide(rotatedBlocks, offset))
+				if (!m_board->WouldCollideAt(rotatedBlocks, offset))
 				{
 					ret = true;
 					shouldOffset = offset;
@@ -303,4 +291,78 @@ bool TetrisGameMode::TryRotate(bool cw)
 	}
 
 	return ret;
+}
+
+bool TetrisGameMode::TryHoldMino()
+{
+	// 한턴에 한번씩만 홀드 가능
+	if (m_bHasHeldThisTurn)
+		return false;
+
+	if (m_holdMinoType == TetrominoType::None)
+	{
+		// 처음 홀드
+		m_holdMinoType = m_currentMino->GetType();
+		
+		ResetCurrentMino();
+		SpawnNextMino();
+	}
+	else
+	{
+		// 홀드 미노와 스왑시 충돌 발생하는지 검사
+		int32 spawnX = m_board->GetWidth() / 2 - 1;
+		int32 spawnY = m_board->GetHeight() - 2;
+
+		if (m_board->WouldCollideAt(m_holdMinoType, Rotation::R0, spawnX, spawnY))
+		{
+			return false;
+		}
+
+		auto oldMinoType = m_currentMino->GetType();
+
+		// 현재 미노를 홀드 타입으로 교체 및 초기화
+		m_currentMino->SetType(m_holdMinoType);
+		m_currentMino->SetPos(spawnX, spawnY);
+		m_currentMino->SetRotation(Rotation::R0);
+
+		m_holdMinoType = oldMinoType;
+	}
+
+	m_bHasHeldThisTurn = true;
+	return true;
+}
+
+bool TetrisGameMode::TryMoveMino(int32 dx, int32 dy)
+{
+	if (!m_currentMino)
+	{
+		__debugbreak();
+		return false;
+	}
+
+	if (m_board->WouldCollideAt(*m_currentMino, dx, dy))
+		return false;
+
+	m_currentMino->Move(dx, dy);
+	return true;
+}
+
+void TetrisGameMode::LockMinoAndProceed()
+{
+	if (!m_currentMino)
+	{
+		__debugbreak();
+	}
+
+	m_board->Lock(*m_currentMino);
+
+	int32 cleared = m_board->ClearFullLines();
+	if (cleared > 0)
+	{
+		GetGameState()->AddScore(cleared * 100);
+	}
+
+	m_bHasHeldThisTurn = false;
+	ResetCurrentMino();
+	SpawnNextMino();
 }

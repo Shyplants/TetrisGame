@@ -27,12 +27,12 @@ void TetrominoActor::OnSpawned()
 	m_renderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 }
 
-Vector2 TetrominoActor::GetPos() const
+IVec2 TetrominoActor::GetPos() const
 {
 	int32 x = GetX();
 	int32 y = GetY();
 
-	return Vector2(static_cast<float>(x), static_cast<float>(y));
+	return IVec2{ x, y };
 }
 
 int32 TetrominoActor::GetX() const
@@ -53,17 +53,23 @@ void TetrominoActor::Move(int32 dx, int32 dy)
 {
 	auto pos = GetRootComponent()->GetLocalPosition();
 	
-	SetPos({ pos.x + static_cast<float>(dx), pos.y + static_cast<float>(dy) });
+	auto x = static_cast<int32>(pos.x) + dx;
+	auto y = static_cast<int32>(pos.y) + dy;
+
+	SetPos({x, y});
 }
 
-void TetrominoActor::SetPos(Vector2 pos)
+void TetrominoActor::SetPos(IVec2 pos)
 {
-	GetRootComponent()->SetLocalPosition({ pos.x, pos.y, 0.0f });
+	auto fx = static_cast<float>(pos.x);
+	auto fy = static_cast<float>(pos.y);
+
+	GetRootComponent()->SetLocalPosition({ fx, fy, 0.0f });
 }
 
 void TetrominoActor::SetPos(int32 x, int32 y)
 {
-	SetPos({ static_cast<float>(x), static_cast<float>(y) });
+	SetPos({ x,y });
 }
 
 void TetrominoActor::Rotate(bool cw)
@@ -71,19 +77,19 @@ void TetrominoActor::Rotate(bool cw)
 	m_rotation = cw ? NextCW(m_rotation) : NextCCW(m_rotation);
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurrentBlocks() const
+std::array<IVec2, MINO_COUNT> TetrominoActor::GetCurrentBlocks() const
 {
 	return TetrisRules::GetShapeBlocks(m_type, m_rotation);
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetRelativeRotatedBlocks(Rotation theta, bool cw) const
+std::array<IVec2, MINO_COUNT> TetrominoActor::GetRelativeRotatedBlocks(Rotation theta, bool cw) const
 {
 	auto rot = NextRotation(m_rotation, theta, cw);
 
 	return TetrisRules::GetShapeBlocks(m_type, rot);
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurrentWorldBlocks() const
+std::array<IVec2, MINO_COUNT> TetrominoActor::GetCurrentWorldBlocks() const
 {
 	auto blocks = GetCurrentBlocks();
 	auto pos = GetPos();
@@ -94,7 +100,7 @@ std::array<Vector2, MINO_COUNT> TetrominoActor::GetCurrentWorldBlocks() const
 	return blocks;
 }
 
-std::array<Vector2, MINO_COUNT> TetrominoActor::GetRelativeRotatedWorldBlocks(Rotation theta, bool cw) const
+std::array<IVec2, MINO_COUNT> TetrominoActor::GetRelativeRotatedWorldBlocks(Rotation theta, bool cw) const
 {
 	auto blocks = GetRelativeRotatedBlocks(theta, cw);
 	auto pos = GetPos();
