@@ -117,12 +117,6 @@ void TetrominoActor::SetRenderOffset(const XMFLOAT2& offset)
 		m_renderer->SetRenderOffset(offset);
 }
 
-void TetrominoActor::SetBoardWorldMatrix(const DirectX::XMMATRIX& mat)
-{
-	if (m_renderer)
-		m_renderer->SetBoardWorldMatrix(mat);
-}
-
 void TetrominoActor::SetGhostMode(bool isGhost)
 {
 	m_isGhost = isGhost;

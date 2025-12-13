@@ -5,6 +5,9 @@
 
 class TetrisBoardActor;
 class TetrominoActor;
+class HoldPanelActor;
+class SidePanelActor;
+class PreviewPanelActor;
 
 class TetrisGameMode : public GameMode
 {
@@ -16,7 +19,11 @@ public:
 	void Tick(float deltaTime) override;
 
 public:
-	void SetBoard(TetrisBoardActor* board) { m_board = board; }
+	void SetBoardActor(TetrisBoardActor* boardActor) { m_boardActor = boardActor; }
+	void SetHoldPanelActor(HoldPanelActor* holdPanelActor) { m_holdPanelActor = holdPanelActor; }
+	void SetSidePanelActor(SidePanelActor* sidePanelActor) { m_sidePanelActor = sidePanelActor; }
+	void SetPreviewPanelActor(PreviewPanelActor* previewActor) { m_previewPanelActor = previewActor; }
+
 	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
 	void StartGame();
 
@@ -37,9 +44,13 @@ private:
 	
 
 private:
-	TetrisBoardActor* m_board{ nullptr };
-	TetrominoActor* m_currentMino{ nullptr };
-	TetrominoActor* m_ghostMino{ nullptr };
+	TetrisBoardActor* m_boardActor{ nullptr };
+	HoldPanelActor* m_holdPanelActor{ nullptr };
+	SidePanelActor* m_sidePanelActor{ nullptr };
+	PreviewPanelActor* m_previewPanelActor{ nullptr };
+
+	TetrominoActor* m_currentMinoActor{ nullptr };
+	TetrominoActor* m_ghostMinoActor{ nullptr };
 	
 	TetrominoType m_holdMinoType{ TetrominoType::None };
 

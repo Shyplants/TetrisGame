@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Engine/Core/Component/RendererComponent.h"
+#include "Common/Math/MathTypes.h"
 #include "SimpleMath.h"
 #include "TetrisTypes.h"
+#include <array>
 
 class TetrominoActor;
 class SpriteMesh;
@@ -27,7 +29,8 @@ public:
 public:
 	void SetTexture(Texture* texture) { m_texture = texture; }
 	void SetRenderMode(ETetrominoRenderMode mode) { m_renderMode = mode; }
-	void SetBoardWorldMatrix(const DirectX::XMMATRIX& mat) { m_boardWorld = mat; }
+	void SetType(TetrominoType type) { m_type = type; }
+	void SetBlocks(const std::array<IVec2, MINO_COUNT>& blocks) { m_blocks = blocks; }
 
 private:
 	SpriteMesh* m_mesh{ nullptr };
@@ -36,5 +39,7 @@ private:
 
 private:
 	ETetrominoRenderMode m_renderMode{ ETetrominoRenderMode::Board };
-	DirectX::XMMATRIX m_boardWorld {DirectX::XMMatrixIdentity()};
+	TetrominoType m_type{ TetrominoType::None };
+
+	std::array<IVec2, MINO_COUNT> m_blocks{};
 };

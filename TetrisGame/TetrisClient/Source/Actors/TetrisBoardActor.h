@@ -10,6 +10,7 @@
 
 class TetrominoActor;
 class BoardRendererComponent;
+class TetrominoRendererComponent;
 class SpriteRendererComponent;
 
 class TetrisBoardActor : public Actor
@@ -24,6 +25,11 @@ public:
 public:
 	int32 GetWidth() const { return m_width; }
 	int32 GetHeight() const { return m_height; }
+
+	int32 GetPanelWidth() const { return m_panelWidth; }
+	int32 GetPanelHeight() const { return m_panelHeight; }
+
+	IVec2 GetRenderOffset();
 
 	// ¼¿ Á¢±Ù
 	TetrominoType Get(int32 x, int32 y) const;
@@ -57,11 +63,9 @@ private:
 	BoardRendererComponent* m_cellRenderer{ nullptr };
 
 	SpriteRendererComponent* m_boardRenderer{ nullptr };
-	SpriteRendererComponent* m_sidePanelRenderer{ nullptr };
-	SpriteRendererComponent* m_holdPanelRenderer{ nullptr };
-	SpriteRendererComponent* m_previewPanelRenderer{ nullptr };
 
 private:
 	int32 m_width{ BOARD_WIDTH }, m_height{ BOARD_HEIGHT };
+	int32 m_panelWidth{}, m_panelHeight{};
 	std::vector<TetrominoType> m_cells;
 };

@@ -35,18 +35,20 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     if (!m_pso)
         m_pso = renderer.GetPSO(L"SpritePSO");
 
-    SceneComponent* sc = GetAttachComponent();
-    if (!sc)
+
+    if (m_renderMode == ETetrominoRenderMode::Board)
+    {
+        auto* tetro = static_cast<TetrominoActor*>(GetOwner());
+        m_type = tetro->IsGhost() ? TetrominoType::Ghost : tetro->GetType();
+        m_blocks = tetro->GetCurrentWorldBlocks();
+    }
+
+    if (m_type == TetrominoType::None)
         return;
 
-    auto* tetro = static_cast<TetrominoActor*>(GetOwner());
-    auto blocks = tetro->GetCurrentWorldBlocks();
-
-    const float cellSize = 32.0f;
-
-    auto type = tetro->IsGhost() ? TetrominoType::Ghost : tetro->GetType();
-    auto tileIndex = GetTileIndex(type);
-
+    auto parentActor = GetOwner()->GetParentActor();
+    auto parentWorld = parentActor->GetRootComponent()->GetWorldMatrix();
+    
     float texW = static_cast<float>(m_texture->GetWidth());
     float texH = static_cast<float>(m_texture->GetHeight());
 
@@ -54,21 +56,16 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     float tileH = 32.0f;
     float spacing = 1.0f;
 
+    auto tileIndex = GetTileIndex(m_type);
     float u0 = (tileIndex * (tileW + spacing)) / texW;
     float v0 = 0.0f;
     float uSize = tileW / texW;
     float vSize = tileH / texH;
 
-    // 보드 모드일 경우 TetrominoActor의 부모 보드 좌표계 적용
-    XMMATRIX boardWorld = XMMatrixIdentity();
-    if (m_renderMode == ETetrominoRenderMode::Board)
-    {
-        boardWorld = m_boardWorld;
-    }
-
+    const float cellSize = 32.0f;
 
     // 블록 4개 렌더링
-    for (auto& block : blocks)
+    for (auto& block : m_blocks)
     {
         float worldX = block.x * cellSize + m_renderOffset.x;
         float worldY = block.y * cellSize + m_renderOffset.y;
@@ -76,7 +73,7 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
         XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
         XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
 
-        XMMATRIX world = S * T * boardWorld;
+        XMMATRIX world = S * T * parentWorld;
         XMMATRIX wvp = world * viewProj;
 
         DrawCommand dc{};

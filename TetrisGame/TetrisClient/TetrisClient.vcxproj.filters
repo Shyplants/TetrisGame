@@ -54,6 +54,15 @@
     <ClInclude Include="Source\Components\Renderer\TetrominoRendererComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actors\HoldPanelActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actors\PreviewPanelActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actors\SidePanelActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ClientPCH\ClientPCH.cpp">
@@ -84,6 +93,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Source\Components\Renderer\TetrominoRendererComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actors\HoldPanelActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actors\PreviewPanelActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actors\SidePanelActor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

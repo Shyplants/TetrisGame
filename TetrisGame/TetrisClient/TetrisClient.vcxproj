@@ -145,6 +145,9 @@
     <ClInclude Include="Include\TetrisHelpers.h" />
     <ClInclude Include="Include\TetrisRules.h" />
     <ClInclude Include="Include\TetrisTypes.h" />
+    <ClInclude Include="Source\Actors\HoldPanelActor.h" />
+    <ClInclude Include="Source\Actors\PreviewPanelActor.h" />
+    <ClInclude Include="Source\Actors\SidePanelActor.h" />
     <ClInclude Include="Source\Actors\TetrisBoardActor.h" />
     <ClInclude Include="Source\Actors\TetrominoActor.h" />
     <ClInclude Include="Source\ClientPCH\ClientPCH.h" />
@@ -156,6 +159,9 @@
     <ClInclude Include="Source\Levels\TetrisLevel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Actors\HoldPanelActor.cpp" />
+    <ClCompile Include="Source\Actors\PreviewPanelActor.cpp" />
+    <ClCompile Include="Source\Actors\SidePanelActor.cpp" />
     <ClCompile Include="Source\Actors\TetrominoActor.cpp" />
     <ClCompile Include="Source\Actors\TetrisBoardActor.cpp" />
     <ClCompile Include="Source\ClientPCH\ClientPCH.cpp">

@@ -42,7 +42,6 @@ public:
 	std::array<IVec2, MINO_COUNT> GetRelativeRotatedWorldBlocks(Rotation theta, bool cw = true) const;
 
 	void SetRenderOffset(const DirectX::XMFLOAT2& offset);
-	void SetBoardWorldMatrix(const DirectX::XMMATRIX& mat);
 
 	bool IsGhost() const { return m_isGhost; }
 	void SetGhostMode(bool isGhost);
