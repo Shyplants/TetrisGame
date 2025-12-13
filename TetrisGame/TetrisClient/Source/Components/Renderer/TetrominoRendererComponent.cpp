@@ -39,9 +39,6 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     if (!sc)
         return;
 
-    auto boardActor = GetOwner()->GetParentActor();
-    auto boardWorld = boardActor->GetRootComponent()->GetWorldMatrix();
-
     auto* tetro = static_cast<TetrominoActor*>(GetOwner());
     auto blocks = tetro->GetCurrentWorldBlocks();
 
@@ -59,9 +56,15 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
 
     float u0 = (tileIndex * (tileW + spacing)) / texW;
     float v0 = 0.0f;
-
     float uSize = tileW / texW;
     float vSize = tileH / texH;
+
+    // 보드 모드일 경우 TetrominoActor의 부모 보드 좌표계 적용
+    XMMATRIX boardWorld = XMMatrixIdentity();
+    if (m_renderMode == ETetrominoRenderMode::Board)
+    {
+        boardWorld = m_boardWorld;
+    }
 
 
     // 블록 4개 렌더링
@@ -77,7 +80,6 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
         XMMATRIX wvp = world * viewProj;
 
         DrawCommand dc{};
-
         dc.PSOHashID = m_pso->GetHashID();
         dc.sortKey.PSOHashID = m_pso->GetHashID();
         dc.sortKey.renderLayer = GameLayer::TileMap;

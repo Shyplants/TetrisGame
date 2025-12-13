@@ -5,6 +5,7 @@
 
 #include "Engine/Core/World/World.h"
 #include "Engine/Core/GameFramework/GameState.h"
+#include "Engine/Core/Component/SceneComponent.h"
 
 #include "Actors/TetrisBoardActor.h"
 #include "Actors/TetrominoActor.h"
@@ -75,11 +76,12 @@ void TetrisGameMode::SpawnNextMino()
 
 	m_currentMino->SetPos(spawnX, spawnY);
 	m_currentMino->SetRenderOffset(m_renderOffset);
-	m_currentMino->AttachToActor(m_board, FAttachmentTransformRules::KeepRelativeTransform);
+	auto boardMat = m_board->GetRootComponent()->GetWorldMatrix();
+	m_currentMino->SetBoardWorldMatrix(boardMat);
 
 	m_ghostMino->SetGhostMode(true);
 	m_ghostMino->SetRenderOffset(m_renderOffset);
-	m_ghostMino->AttachToActor(m_board, FAttachmentTransformRules::KeepRelativeTransform);
+	m_ghostMino->SetBoardWorldMatrix(boardMat);
 
 	if (m_board->WouldCollideAt(*m_currentMino, 0, 0))
 		m_isGameOver = true;

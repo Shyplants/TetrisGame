@@ -65,7 +65,7 @@ void TetrisLevel::OnBeginPlay()
     gameMode->SetBoard(boardActor);
     gameMode->SetRenderOffset(renderOffset);
 
-    // boardActor->GetRootComponent()->SetLocalPosition({ 60.0f, +200.0f, 0.0f });
+    // boardActor->GetRootComponent()->SetLocalPosition({ -60.0f, -200.0f, 0.0f });
 }
 
 void TetrisLevel::Tick(float deltaTime)
