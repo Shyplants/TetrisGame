@@ -41,4 +41,5 @@ private:
 	TetrominoType m_type{ TetrominoType::None };
 
 	std::array<IVec2, MINO_COUNT> m_blocks{};
+	DirectX::XMFLOAT2 m_uiOffset{0.0f, 0.0f}; // UI 중앙 정렬 맞추기 용도
 };

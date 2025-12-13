@@ -6,6 +6,7 @@
 #include "Engine/Resource/Texture/Texture.h"
 
 #include "TetrisRules.h"
+#include "TetrisHelpers.h"
 #include "Components/Renderer/TetrominoRendererComponent.h"
 
 using namespace DirectX;

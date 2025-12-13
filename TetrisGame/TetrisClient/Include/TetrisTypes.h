@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/Types.h"
+#include "Common/Math/MathTypes.h"
 
 // 테트리스 미노 타입
 enum class TetrominoType : int32
@@ -41,42 +42,6 @@ enum class Rotation : int32
     R180,
     R270
 };
-
-// 회전 헬퍼 함수
-inline Rotation NextCW(Rotation r)
-{
-    switch (r)
-    {
-    case Rotation::R0:   return Rotation::R90;
-    case Rotation::R90:  return Rotation::R180;
-    case Rotation::R180: return Rotation::R270;
-    case Rotation::R270: return Rotation::R0;
-    }
-    return Rotation::R0;
-}
-
-inline Rotation NextCCW(Rotation r)
-{
-    switch (r)
-    {
-    case Rotation::R0:   return Rotation::R270;
-    case Rotation::R90:  return Rotation::R0;
-    case Rotation::R180: return Rotation::R90;
-    case Rotation::R270: return Rotation::R180;
-    }
-    return Rotation::R0;
-}
-
-inline Rotation NextRotation(Rotation cur, Rotation theta, bool cw)
-{
-    int32 c = static_cast<int32>(cur);
-    int32 t = static_cast<int32>(theta);
-    t *= (cw ? 1 : -1);
-
-    int32 next = (c + t + 4) % 4;
-
-    return static_cast<Rotation>(next);
-}
 
 // 움직임
 enum class MoveDir : int32

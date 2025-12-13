@@ -16,6 +16,7 @@
 #include "Engine/System/InputManager.h"
 
 #include "TetrisRules.h"
+#include "TetrisHelpers.h"
 
 using namespace DirectX::SimpleMath;
 

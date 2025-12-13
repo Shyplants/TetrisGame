@@ -21,6 +21,8 @@ PreviewPanelActor::~PreviewPanelActor()
 void PreviewPanelActor::OnSpawned()
 {
 	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/PreviewPanel.png").get();
+	auto panelWidth = static_cast<float>(panelTexture->GetWidth());
+	auto panelHeight = static_cast<float>(panelTexture->GetHeight());
 
 	float offsetX = static_cast<float>(m_offset.x);
 	float offsetY = static_cast<float>(m_offset.y);
@@ -30,19 +32,31 @@ void PreviewPanelActor::OnSpawned()
 	m_panelRenderer->SetPivot(SpritePivot::TopLeft);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
 
-	constexpr float PREVIEW_SPACING = CELL_SIZE * 3.0f;
-	offsetX += static_cast<float>(panelTexture->GetWidth()) / 2.0f;
+	constexpr float TOP_MARGIN_RATIO = 0.0496f;       // 패널 상단 여백
+	constexpr float ITEM_SPACING_RATIO = 0.0307f;     // 미노 간 비율 기반 추가 간격
+	constexpr float PREVIEW_ITEM_HEIGHT = CELL_SIZE;  // 셀 한칸 높이
+
+	float topMargin = panelHeight * TOP_MARGIN_RATIO;
+	float extraSpacing = panelHeight * ITEM_SPACING_RATIO;
+	float firstItemSpacing = extraSpacing + PREVIEW_ITEM_HEIGHT;
+
+	// 첫 미노의 시작 위치 보정
+	offsetX += panelWidth * 0.5f;
+	offsetY -= (topMargin + firstItemSpacing);
+
+	// 각 미노 사이 간격
+	float previewSpacing = (CELL_SIZE * 2.0f) + (extraSpacing * 2.0f);
 
 	// 미리보기 미노 렌더러(5개)
 	for (int32 i = 0; i < MINO_PREVIEW_COUNT; ++i)
 	{
-		offsetY -= PREVIEW_SPACING;
-
 		m_previewMinoRenderers[i] = AddComponent<TetrominoRendererComponent>();
 		m_previewMinoRenderers[i]->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 		m_previewMinoRenderers[i]->SetRenderMode(ETetrominoRenderMode::UI);
 		m_previewMinoRenderers[i]->SetTetromino(TetrominoType::None);
 		m_previewMinoRenderers[i]->SetRenderOffset({ offsetX , offsetY });
+
+		offsetY -= previewSpacing;
 	}
 }
 

@@ -21,6 +21,8 @@ HoldPanelActor::~HoldPanelActor()
 void HoldPanelActor::OnSpawned()
 {
 	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/HoldPanel.png").get();
+	auto panelWidth = static_cast<float>(panelTexture->GetWidth());
+	auto panelHeight = static_cast<float>(panelTexture->GetHeight());
 
 	float offsetX = static_cast<float>(m_offset.x);
 	float offsetY = static_cast<float>(m_offset.y);
@@ -30,9 +32,17 @@ void HoldPanelActor::OnSpawned()
 	m_panelRenderer->SetPivot(SpritePivot::TopRight);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
 
+	constexpr float TOP_MARGIN_RATIO = 0.2083f;
+	constexpr float ITEM_PADDING_RATIO = 0.3791f;
+
+	float topMargin = panelHeight * TOP_MARGIN_RATIO;
+	float topPadding = panelHeight * ITEM_PADDING_RATIO;
+
+	// 홀드 미노 시작 위치 보정
+	offsetX -= panelWidth * 0.5f;
+	offsetY -= (topMargin + topPadding);
+
 	// 홀드 미노 렌더러
-	offsetX += static_cast<float>(panelTexture->GetWidth()) / -2.0f;
-	offsetY += static_cast<float>(panelTexture->GetHeight()) / -2.0f;
 	m_holdMinoRenderer = AddComponent<TetrominoRendererComponent>();
 	m_holdMinoRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 	m_holdMinoRenderer->SetRenderMode(ETetrominoRenderMode::UI);

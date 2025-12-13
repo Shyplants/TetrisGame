@@ -13,6 +13,7 @@
 #include "Engine/Core/World/Actor.h"
 
 #include "TetrisRules.h"
+#include "TetrisHelpers.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -44,6 +45,11 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
         m_type = tetro->IsGhost() ? TetrominoType::Ghost : tetro->GetType();
         m_blocks = tetro->GetCurrentWorldBlocks();
     }
+    else if (m_renderMode == ETetrominoRenderMode::UI)
+    {
+        m_uiOffset = ComputeCenteringOffset(m_blocks);
+    }
+
 
     if (m_type == TetrominoType::None)
         return;
@@ -69,8 +75,8 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     // 블록 4개 렌더링
     for (auto& block : m_blocks)
     {
-        float worldX = block.x * cellSize + m_renderOffset.x;
-        float worldY = block.y * cellSize + m_renderOffset.y;
+        float worldX = (static_cast<float>(block.x) + m_uiOffset.x) * cellSize + m_renderOffset.x;
+        float worldY = (static_cast<float>(block.y) + m_uiOffset.y) * cellSize + m_renderOffset.y;
 
         XMMATRIX T = XMMatrixTranslation(worldX, worldY, 0.0f);
         XMMATRIX S = XMMatrixScaling(cellSize, cellSize, 1.0f);
