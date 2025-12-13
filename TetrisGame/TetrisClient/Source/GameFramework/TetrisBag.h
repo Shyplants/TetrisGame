@@ -18,11 +18,11 @@ public:
 
 private:
 	// 미노 7개가 모두 비었으면 새 가방 생성
-	void Refill();
+	void Refill() const;
 
 private:
-	std::vector<TetrominoType> m_currentBag;  // 7개 미노 셋
-	std::deque<TetrominoType> m_queue;        // 게임이 꺼내 쓰는 큐
-	std::mt19937_64 m_rng;                    // 랜덤 생성기
+	mutable std::vector<TetrominoType> m_currentBag;  // 7개 미노 셋
+	mutable std::deque<TetrominoType> m_queue;        // 게임이 꺼내 쓰는 큐
+	mutable std::mt19937_64 m_rng;                    // 랜덤 생성기
 
 };

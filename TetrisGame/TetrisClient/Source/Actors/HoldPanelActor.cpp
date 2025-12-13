@@ -36,7 +36,7 @@ void HoldPanelActor::OnSpawned()
 	m_holdMinoRenderer = AddComponent<TetrominoRendererComponent>();
 	m_holdMinoRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
 	m_holdMinoRenderer->SetRenderMode(ETetrominoRenderMode::UI);
-	m_holdMinoRenderer->SetType(TetrominoType::None);
+	m_holdMinoRenderer->SetTetromino(TetrominoType::None);
 	m_holdMinoRenderer->SetRenderOffset({ offsetX , offsetY });
 }
 
@@ -52,8 +52,7 @@ IVec2 HoldPanelActor::GetRenderOffset()
 	return IVec2{};
 }
 
-void HoldPanelActor::UpdateHoldMinoInfo(TetrominoType type, bool bHasHeldThisTurn)
+void HoldPanelActor::UpdateHoldMino(TetrominoType type, bool bHasHeldThisTurn)
 {
-	m_holdMinoRenderer->SetType(type);
-	m_holdMinoRenderer->SetBlocks(TetrisRules::GetShapeBlocks(type, Rotation::R0));
+	m_holdMinoRenderer->SetTetromino(type);
 }

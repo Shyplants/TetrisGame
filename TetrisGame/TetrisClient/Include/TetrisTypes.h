@@ -104,9 +104,11 @@ enum ColorCode : int32
 // 테트리스 규칙 기반 상수
 constexpr int32 ROTATION_COUNT = 4;
 constexpr int32 MINO_COUNT = 4;
-constexpr int32 MINO_PREVIEW_COUNT = 4; // 혹은 5 (게임 규칙에 따라 조정)
+constexpr int32 MINO_PREVIEW_COUNT = 5;
 constexpr int32 MINO_TYPE_COUNT = 7;
 
 constexpr int32 JLSTZ_OFFSET_COUNT = 5;
 constexpr int32 I_OFFSET_COUNT = 5;
 constexpr int32 O_OFFSET_COUNT = 1;
+
+constexpr int32 CELL_SIZE = 32;

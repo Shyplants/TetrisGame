@@ -19,7 +19,7 @@ public:
 public:
 	IVec2 GetRenderOffset();
 	
-	void UpdateHoldMinoInfo(TetrominoType type, bool bHasHeldThisTurn);
+	void UpdateHoldMino(TetrominoType type, bool bHasHeldThisTurn);
 
 private:
 	TetrominoRendererComponent* m_holdMinoRenderer{ nullptr };

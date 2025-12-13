@@ -29,6 +29,21 @@ void PreviewPanelActor::OnSpawned()
 	m_panelRenderer->SetTexture(panelTexture);
 	m_panelRenderer->SetPivot(SpritePivot::TopLeft);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
+
+	constexpr float PREVIEW_SPACING = CELL_SIZE * 3.0f;
+	offsetX += static_cast<float>(panelTexture->GetWidth()) / 2.0f;
+
+	// 미리보기 미노 렌더러(5개)
+	for (int32 i = 0; i < MINO_PREVIEW_COUNT; ++i)
+	{
+		offsetY -= PREVIEW_SPACING;
+
+		m_previewMinoRenderers[i] = AddComponent<TetrominoRendererComponent>();
+		m_previewMinoRenderers[i]->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+		m_previewMinoRenderers[i]->SetRenderMode(ETetrominoRenderMode::UI);
+		m_previewMinoRenderers[i]->SetTetromino(TetrominoType::None);
+		m_previewMinoRenderers[i]->SetRenderOffset({ offsetX , offsetY });
+	}
 }
 
 IVec2 PreviewPanelActor::GetRenderOffset()
@@ -41,4 +56,14 @@ IVec2 PreviewPanelActor::GetRenderOffset()
 	}
 
 	return IVec2{};
+}
+
+void PreviewPanelActor::UpdatePreviewMinos(const std::array<TetrominoType, MINO_PREVIEW_COUNT>& previewMinoTypes)
+{
+	for (int32 i = 0; i < MINO_PREVIEW_COUNT; ++i)
+	{
+		auto type = previewMinoTypes[i];
+
+		m_previewMinoRenderers[i]->SetTetromino(type);
+	}
 }

@@ -12,6 +12,8 @@
 #include "Engine/Core/Component/SceneComponent.h"
 #include "Engine/Core/World/Actor.h"
 
+#include "TetrisRules.h"
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -102,4 +104,12 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
 
         renderer.Submit(dc);
     }
+}
+
+void TetrominoRendererComponent::SetTetromino(TetrominoType type, Rotation rot)
+{
+    m_type = type;
+
+    if(IsMinoType(type))
+        m_blocks = TetrisRules::GetShapeBlocks(type, rot);
 }

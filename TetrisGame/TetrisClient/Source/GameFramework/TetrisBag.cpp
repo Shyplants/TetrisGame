@@ -22,15 +22,20 @@ TetrominoType TetrisBag::Pop()
 
 TetrominoType TetrisBag::Peek(int32 index) const
 {
-	if (index < 0 || index >= static_cast<int32>(m_queue.size()))
+	if (index < 0)
 	{
 		return TetrominoType::None;
+	}
+
+	while (m_queue.size() <= index)
+	{
+		Refill();
 	}
 
 	return m_queue[index];
 }
 
-void TetrisBag::Refill()
+void TetrisBag::Refill() const
 {
 	m_currentBag = {
 		TetrominoType::I,

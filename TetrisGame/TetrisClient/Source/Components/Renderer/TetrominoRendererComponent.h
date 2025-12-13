@@ -29,8 +29,7 @@ public:
 public:
 	void SetTexture(Texture* texture) { m_texture = texture; }
 	void SetRenderMode(ETetrominoRenderMode mode) { m_renderMode = mode; }
-	void SetType(TetrominoType type) { m_type = type; }
-	void SetBlocks(const std::array<IVec2, MINO_COUNT>& blocks) { m_blocks = blocks; }
+	void SetTetromino(TetrominoType type, Rotation rot = Rotation::R0);
 
 private:
 	SpriteMesh* m_mesh{ nullptr };

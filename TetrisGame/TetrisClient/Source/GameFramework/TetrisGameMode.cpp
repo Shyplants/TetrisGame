@@ -8,6 +8,8 @@
 
 #include "Actors/TetrisBoardActor.h"
 #include "Actors/HoldPanelActor.h"
+#include "Actors/SidePanelActor.h"
+#include "Actors/PreviewPanelActor.h"
 
 #include "Actors/TetrominoActor.h"
 
@@ -86,6 +88,13 @@ void TetrisGameMode::SpawnNextMino()
 	if (m_boardActor->WouldCollideAt(*m_currentMinoActor, 0, 0))
 		m_isGameOver = true;
 	
+	// 미리보기 업데이트
+	std::array<TetrominoType, MINO_PREVIEW_COUNT> previewMinoTypes;
+	for (int32 i = 0; i < MINO_PREVIEW_COUNT; ++i)
+		previewMinoTypes[i] = m_bag.Peek(i);
+	
+	if (m_previewPanelActor)
+		m_previewPanelActor->UpdatePreviewMinos(previewMinoTypes);
 }
 
 void TetrisGameMode::HandleInput(float deltaTime)
@@ -157,7 +166,7 @@ void TetrisGameMode::HandleInput(float deltaTime)
 		{
 			m_fallTimer = 0.0f;
 			UpdateGhostMino();
-			m_holdPanelActor->UpdateHoldMinoInfo(m_holdMinoType, true);
+			m_holdPanelActor->UpdateHoldMino(m_holdMinoType, true);
 		}
 	}
 
@@ -366,7 +375,7 @@ void TetrisGameMode::LockMinoAndProceed()
 	}
 
 	m_bHasHeldThisTurn = false;
-	m_holdPanelActor->UpdateHoldMinoInfo(m_holdMinoType, false);
+	m_holdPanelActor->UpdateHoldMino(m_holdMinoType, false);
 	ResetCurrentMino();
 	SpawnNextMino();
 }

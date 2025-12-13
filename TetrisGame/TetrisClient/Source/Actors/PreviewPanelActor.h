@@ -3,6 +3,8 @@
 #include "Engine/Core/World/Actor.h"
 #include "Common/Math/MathTypes.h"
 
+#include <array>
+
 #include "TetrisTypes.h"
 
 class TetrominoRendererComponent;
@@ -19,9 +21,10 @@ public:
 public:
 	IVec2 GetRenderOffset();
 
-	void UpdateHoldMinoInfo(TetrominoType type, bool bHasHeldThisTurn);
+	void UpdatePreviewMinos(const std::array<TetrominoType, MINO_PREVIEW_COUNT>& previewMinoTypes);
 
 private:
+	std::array<TetrominoRendererComponent*, MINO_PREVIEW_COUNT> m_previewMinoRenderers{};
 	SpriteRendererComponent* m_panelRenderer{ nullptr };
 
 private:
