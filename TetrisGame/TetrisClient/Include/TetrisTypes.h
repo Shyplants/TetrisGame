@@ -17,7 +17,10 @@ enum class TetrominoType : int32
 
 inline int32 GetTileIndex(TetrominoType type)
 {
-    return static_cast<int32>(type) - 1;
+    // None   : -1
+    // ³ª¸ÓÁö : [0... )
+
+    return static_cast<int32>(type) - static_cast<int32>(TetrominoType::I);
 }
 
 inline bool IsMinoType(TetrominoType type)

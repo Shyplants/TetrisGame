@@ -24,9 +24,5 @@
 #include "SimpleMath.h"
 #include "Common/Math/MathTypes.h"
 
-// Engine includes
-//#include "Engine/Engine.h"
-//#include "Engine/GameObject/GameObject.h"
-//#include "Engine/Scene/SceneManager.h"
-//#include "Engine/Scene/Scene.h"
-//#include "Engine/Input/Input.h"
+// Engine
+#include "Engine/EngineMinimal.h"

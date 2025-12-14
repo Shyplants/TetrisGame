@@ -35,26 +35,26 @@ void BoardRendererComponent::RenderWorld(D3D11Renderer& renderer, const DirectX:
 	if (!m_pso)
 		m_pso = renderer.GetPSO(L"SpritePSO");
 
-	SceneComponent* sc = GetAttachComponent();
-	if (!sc)
-		return;
+	auto boardSceneComp = GetAttachComponent();
+	SP_ASSERT(boardSceneComp != nullptr);
 
-	XMMATRIX boardWorld = sc->GetWorldMatrix();
+	XMMATRIX boardWorld = boardSceneComp->GetWorldMatrix();
 
 	const int32 width = m_board->GetWidth();
 	const int32 height = m_board->GetHeight();
 
-	const float cellSize = 32.0f;
+	const float cellSize = 32.0f; // TODO: Refactor
 
 	for (int32 y = 0; y < height; ++y)
 	{
-		for(int32 x=0; x<width; ++x)
+		for(int32 x = 0; x < width; ++x)
 		{
 			auto type = m_board->Get(x, y);
 			if (type == TetrominoType::None)
 				continue;
 
 			auto tileIndex = GetTileIndex(type);
+			SP_ASSERT(tileIndex >= 0);
 
 			float texW = static_cast<float>(m_blockTexture->GetWidth());
 			float texH = static_cast<float>(m_blockTexture->GetHeight());

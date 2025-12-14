@@ -22,25 +22,30 @@ TetrisBoardActor::TetrisBoardActor(int32 width, int32 height)
 
 }
 
-TetrisBoardActor::~TetrisBoardActor()
-{
-}
+TetrisBoardActor::~TetrisBoardActor() = default;
 
 void TetrisBoardActor::OnSpawned()
 {
 	m_cellRenderer = AddComponent<BoardRendererComponent>();
+	SP_ASSERT(m_cellRenderer != nullptr);
+
 	m_cellRenderer->SetBoard(this);
-	m_cellRenderer->SetBlockTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+
+	auto tileTexture = ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png");
+	SP_ASSERT(tileTexture != nullptr);
+
+	m_cellRenderer->SetBlockTexture(tileTexture.get());
 
 
-	auto boardTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/Board.png").get();
+	auto boardTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/Board.png");
+	SP_ASSERT(boardTexture != nullptr);
 
 	m_panelWidth = boardTexture->GetWidth();
 	m_panelHeight = boardTexture->GetHeight();
 
 	// 보드 본체
 	m_boardRenderer = AddComponent<SpriteRendererComponent>();
-	m_boardRenderer->SetTexture(boardTexture);
+	m_boardRenderer->SetTexture(boardTexture.get());
 	m_boardRenderer->SetPivot(SpritePivot::Center);
 
 	// Test
@@ -76,12 +81,13 @@ TetrominoType TetrisBoardActor::Get(int32 x, int32 y) const
 
 bool TetrisBoardActor::WouldCollideAt(std::array<IVec2, MINO_COUNT> blocks, IVec2 offset) const
 {
-	for (auto& block : blocks)
+	auto movedBlocks = blocks;
+	for (auto& block : movedBlocks)
 	{
 		block += offset;
 	}
 
-	return WouldCollideAt(blocks);
+	return WouldCollideAt(movedBlocks);
 }
 
 bool TetrisBoardActor::WouldCollideAt(const TetrominoActor& t, int32 dx, int32 dy) const
@@ -185,11 +191,7 @@ void TetrisBoardActor::Set(int32 x, int32 y, TetrominoType type)
 
 int32 TetrisBoardActor::pos2Idx(int32 x, int32 y) const
 {
-	if (OOB(x, y))
-	{
-		// TODO : Log
-		return -1;
-	}
+	SP_ASSERT(!OOB(x, y));
 
 	return y * m_width + x;
 }

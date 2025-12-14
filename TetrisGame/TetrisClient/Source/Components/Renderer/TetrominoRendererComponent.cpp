@@ -41,9 +41,11 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
 
     if (m_renderMode == ETetrominoRenderMode::Board)
     {
-        auto* tetro = static_cast<TetrominoActor*>(GetOwner());
-        m_type = tetro->IsGhost() ? TetrominoType::Ghost : tetro->GetType();
-        m_blocks = tetro->GetCurrentWorldBlocks();
+        auto* minoActor = static_cast<TetrominoActor*>(GetOwner());
+        SP_ASSERT(minoActor != nullptr);
+
+        m_type = minoActor->IsGhost() ? TetrominoType::Ghost : minoActor->GetType();
+        m_blocks = minoActor->GetCurrentWorldBlocks();
     }
     else if (m_renderMode == ETetrominoRenderMode::UI)
     {
@@ -55,6 +57,8 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
         return;
 
     auto parentActor = GetOwner()->GetParentActor();
+    SP_ASSERT(parentActor != nullptr);
+
     auto parentWorld = parentActor->GetRootComponent()->GetWorldMatrix();
     
     float texW = static_cast<float>(m_texture->GetWidth());
@@ -65,6 +69,8 @@ void TetrominoRendererComponent::RenderWorld(D3D11Renderer& renderer, const Dire
     float spacing = 1.0f;
 
     auto tileIndex = GetTileIndex(m_type);
+    SP_ASSERT(tileIndex >= 0);
+
     float u0 = (tileIndex * (tileW + spacing)) / texW;
     float v0 = 0.0f;
     float uSize = tileW / texW;

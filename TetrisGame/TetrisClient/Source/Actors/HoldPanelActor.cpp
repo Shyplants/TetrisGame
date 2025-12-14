@@ -14,13 +14,13 @@ HoldPanelActor::HoldPanelActor(IVec2 offset)
 {
 }
 
-HoldPanelActor::~HoldPanelActor()
-{
-}
+HoldPanelActor::~HoldPanelActor() = default;
 
 void HoldPanelActor::OnSpawned()
 {
-	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/HoldPanel.png").get();
+	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/HoldPanel.png");
+	SP_ASSERT(panelTexture != nullptr);
+
 	auto panelWidth = static_cast<float>(panelTexture->GetWidth());
 	auto panelHeight = static_cast<float>(panelTexture->GetHeight());
 
@@ -28,7 +28,7 @@ void HoldPanelActor::OnSpawned()
 	float offsetY = static_cast<float>(m_offset.y);
 
 	m_panelRenderer = AddComponent<SpriteRendererComponent>();
-	m_panelRenderer->SetTexture(panelTexture);
+	m_panelRenderer->SetTexture(panelTexture.get());
 	m_panelRenderer->SetPivot(SpritePivot::TopRight);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
 
@@ -44,13 +44,18 @@ void HoldPanelActor::OnSpawned()
 
 	// È¦µå ¹Ì³ë ·»´õ·¯
 	m_holdMinoRenderer = AddComponent<TetrominoRendererComponent>();
-	m_holdMinoRenderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+	SP_ASSERT(m_holdMinoRenderer != nullptr);
+
+	auto tileTexture = ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png");
+	SP_ASSERT(tileTexture != nullptr);
+
+	m_holdMinoRenderer->SetTexture(tileTexture.get());
 	m_holdMinoRenderer->SetRenderMode(ETetrominoRenderMode::UI);
 	m_holdMinoRenderer->SetTetromino(TetrominoType::None);
 	m_holdMinoRenderer->SetRenderOffset({ offsetX , offsetY });
 }
 
-IVec2 HoldPanelActor::GetRenderOffset()
+IVec2 HoldPanelActor::GetRenderOffset() const
 {
 	if (m_panelRenderer)
 	{
@@ -64,5 +69,7 @@ IVec2 HoldPanelActor::GetRenderOffset()
 
 void HoldPanelActor::UpdateHoldMino(TetrominoType type, bool bHasHeldThisTurn)
 {
+	SP_ASSERT(m_holdMinoRenderer != nullptr);
+
 	m_holdMinoRenderer->SetTetromino(type);
 }

@@ -31,10 +31,17 @@ TetrisLevel::~TetrisLevel()
 void TetrisLevel::OnLoad()
 {
 	World* world = GetWorld();
+    SP_ASSERT(world != nullptr);
+
+    // 리소스 처음 로드시점
+    SP_ASSERT(nullptr != ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png", TextureColorSpace::Linear));
 
     // camera
 	auto camActor = world->SpawnActor<Actor>();
+    SP_ASSERT(camActor != nullptr);
+
 	auto camComp = camActor->AddComponent<CameraComponent2D>();
+    SP_ASSERT(camComp != nullptr);
 
     camActor->GetRootComponent()->SetLocalPosition({ 0.0, 0.0f, -10.0f });
     camComp->SetZoom(1.0f);
@@ -42,10 +49,15 @@ void TetrisLevel::OnLoad()
 
     // background
     auto bgActor = world->SpawnActor<Actor>();
+    SP_ASSERT(bgActor != nullptr);
+
     auto bgSpriteComp = bgActor->AddComponent<SpriteRendererComponent>();
+    SP_ASSERT(bgSpriteComp != nullptr);
 
     bgActor->GetRootComponent()->SetLocalPosition({ 0.0, 0.0f, 100.0f });
-    bgSpriteComp->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/Background.jpg").get());
+    auto bgTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Background.jpg");
+    SP_ASSERT(bgTexture != nullptr);
+    bgSpriteComp->SetTexture(bgTexture.get());
 
     // game mode
     world->SetGameMode(std::make_unique<TetrisGameMode>(world));
@@ -54,12 +66,14 @@ void TetrisLevel::OnLoad()
 void TetrisLevel::OnBeginPlay()
 {
     Level::OnBeginPlay();
+    SP_LOG(LogGame, ELogLevel::Info, "TetrisLevel::OnBeginPlay called");
 
     World* world = GetWorld();
+    SP_ASSERT(world != nullptr);
 
     // 보드 생성
     auto boardActor = world->SpawnActor<TetrisBoardActor>();
-
+    SP_ASSERT(boardActor != nullptr);
 
     // 보드 왼쪽
     HoldPanelActor* holdPanelActor = nullptr;
@@ -67,6 +81,8 @@ void TetrisLevel::OnBeginPlay()
         // 홀드 패널 생성
         auto holdPanelOffset = boardActor->GetRenderOffset() + IVec2(boardActor->GetPanelWidth() / -2 + 4, boardActor->GetPanelHeight() / 2);
         holdPanelActor = world->SpawnActor<HoldPanelActor>(holdPanelOffset);
+        SP_ASSERT(holdPanelActor != nullptr);
+
         holdPanelActor->AttachToActor(boardActor, FAttachmentTransformRules::KeepRelativeTransform);
     }
     
@@ -77,17 +93,21 @@ void TetrisLevel::OnBeginPlay()
         // 사이드(오른쪽) 패널 생성
         auto sidePanelOffset = boardActor->GetRenderOffset() + IVec2(boardActor->GetPanelWidth() / 2 - 4, 0);
         sidePanelActor = world->SpawnActor<SidePanelActor>(sidePanelOffset);
+        SP_ASSERT(sidePanelActor != nullptr);
+
         sidePanelActor->AttachToActor(boardActor, FAttachmentTransformRules::KeepRelativeTransform);
 
         // 미리보기 패널 생성
         auto previewPanelOffset = sidePanelActor->GetRenderOffset() + IVec2(sidePanelActor->GetPanelWidth() - 4, boardActor->GetPanelHeight() / 2);
         previewPanelActor = world->SpawnActor<PreviewPanelActor>(previewPanelOffset);
+        SP_ASSERT(previewPanelActor != nullptr);
+
         previewPanelActor->AttachToActor(boardActor, FAttachmentTransformRules::KeepRelativeTransform);
     }
 
     // GameMode에 전달
     auto gameMode = world->GetGameMode<TetrisGameMode>();
-    assert(gameMode && "gameMode is not valid!");
+    SP_ASSERT(gameMode != nullptr);
 
     DirectX::XMFLOAT2 renderOffset = { -160.0f, -320.0f + 2.0f };
 

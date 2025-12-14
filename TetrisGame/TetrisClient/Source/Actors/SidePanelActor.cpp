@@ -11,13 +11,12 @@ SidePanelActor::SidePanelActor(IVec2 offset)
 {
 }
 
-SidePanelActor::~SidePanelActor()
-{
-}
+SidePanelActor::~SidePanelActor() = default;
 
 void SidePanelActor::OnSpawned()
 {
-	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/SidePanel.png").get();
+	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/SidePanel.png");
+	SP_ASSERT(panelTexture != nullptr);
 
 	m_panelWidth = panelTexture->GetWidth();
 	m_panelHeight = panelTexture->GetHeight();
@@ -26,12 +25,14 @@ void SidePanelActor::OnSpawned()
 	float offsetY = static_cast<float>(m_offset.y);
 
 	m_panelRenderer = AddComponent<SpriteRendererComponent>();
-	m_panelRenderer->SetTexture(panelTexture);
+	SP_ASSERT(m_panelRenderer != nullptr);
+
+	m_panelRenderer->SetTexture(panelTexture.get());
 	m_panelRenderer->SetPivot(SpritePivot::MiddleLeft);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
 }
 
-IVec2 SidePanelActor::GetRenderOffset()
+IVec2 SidePanelActor::GetRenderOffset() const
 {
 	if (m_panelRenderer)
 	{

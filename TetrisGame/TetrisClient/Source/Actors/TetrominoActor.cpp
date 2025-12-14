@@ -18,14 +18,17 @@ TetrominoActor::TetrominoActor(TetrominoType type)
 {
 }
 
-TetrominoActor::~TetrominoActor()
-{
-}
+TetrominoActor::~TetrominoActor() = default;
 
 void TetrominoActor::OnSpawned()
 {
 	m_renderer = AddComponent<TetrominoRendererComponent>();
-	m_renderer->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+	SP_ASSERT(m_renderer != nullptr);
+
+	auto tileTexture = ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png");
+	SP_ASSERT(tileTexture != nullptr);
+
+	m_renderer->SetTexture(tileTexture.get());
 }
 
 IVec2 TetrominoActor::GetPos() const

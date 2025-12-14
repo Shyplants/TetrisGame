@@ -19,7 +19,7 @@ public:
 	void OnSpawned() override;
 
 public:
-	IVec2 GetRenderOffset();
+	IVec2 GetRenderOffset() const;
 
 	void UpdatePreviewMinos(const std::array<TetrominoType, MINO_PREVIEW_COUNT>& previewMinoTypes);
 

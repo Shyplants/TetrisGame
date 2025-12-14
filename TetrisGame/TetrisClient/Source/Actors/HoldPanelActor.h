@@ -17,7 +17,7 @@ public:
 	void OnSpawned() override;
 
 public:
-	IVec2 GetRenderOffset();
+	IVec2 GetRenderOffset() const;
 	
 	void UpdateHoldMino(TetrominoType type, bool bHasHeldThisTurn);
 

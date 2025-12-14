@@ -50,7 +50,7 @@ void TetrisGameMode::Tick(float deltaTime)
 void TetrisGameMode::SetRenderOffset(const DirectX::XMFLOAT2& offset)
 {
 	m_renderOffset = offset;
-	
+
 	if (m_boardActor)
 		m_boardActor->SetRenderOffset(offset);
 }
@@ -64,13 +64,10 @@ void TetrisGameMode::StartGame()
 void TetrisGameMode::SpawnNextMino()
 {
 	// 현재 미노는 없는 상태여야 함
-	if (m_currentMinoActor)
-	{
-		// TODO : Log
-		int32 d = 0;
-		return;
-	}
-	
+	SP_ASSERT(m_boardActor != nullptr);
+	SP_ASSERT(m_currentMinoActor == nullptr);
+	SP_ASSERT(m_ghostMinoActor == nullptr);
+
 	TetrominoType next = m_bag.Pop();
 	m_currentMinoActor = GetWorld()->SpawnActor<TetrominoActor>(next);
 	m_ghostMinoActor = GetWorld()->SpawnActor<TetrominoActor>(next);
@@ -154,6 +151,9 @@ void TetrisGameMode::HandleInput(float deltaTime)
 	// Hard Drop
 	if (input.IsKeyPressed(KeyCode::Space))
 	{
+		SP_ASSERT(m_boardActor != nullptr);
+		SP_ASSERT(m_currentMinoActor != nullptr);
+
 		while (!m_boardActor->WouldCollideAt(*m_currentMinoActor, 0, -1))
 			m_currentMinoActor->Move(0, -1);
 
@@ -167,6 +167,8 @@ void TetrisGameMode::HandleInput(float deltaTime)
 		{
 			m_fallTimer = 0.0f;
 			UpdateGhostMino();
+
+			SP_ASSERT(m_holdPanelActor != nullptr);
 			m_holdPanelActor->UpdateHoldMino(m_holdMinoType, true);
 		}
 	}
@@ -176,11 +178,7 @@ void TetrisGameMode::HandleInput(float deltaTime)
 
 void TetrisGameMode::UpdateFalling(float deltaTime)
 {
-	if (!m_currentMinoActor)
-		return;
-
 	m_fallTimer += deltaTime;
-
 	if (m_fallTimer >= m_fallInterval)
 	{
 		m_fallTimer = 0.0f;
@@ -194,10 +192,14 @@ void TetrisGameMode::UpdateFalling(float deltaTime)
 
 void TetrisGameMode::UpdateGhostMino()
 {
+	SP_ASSERT(m_currentMinoActor != nullptr);
+	SP_ASSERT(m_ghostMinoActor != nullptr);
+
 	m_ghostMinoActor->SetType(m_currentMinoActor->GetType());
 	m_ghostMinoActor->SetPos(m_currentMinoActor->GetPos());
 	m_ghostMinoActor->SetRotation(m_currentMinoActor->GetRotation());
 
+	SP_ASSERT(m_boardActor != nullptr);
 	while (!m_boardActor->WouldCollideAt(*m_ghostMinoActor, 0, -1))
 	{
 		m_ghostMinoActor->Move(0, -1);
@@ -221,8 +223,8 @@ void TetrisGameMode::ResetCurrentMino()
 
 bool TetrisGameMode::TryRotateMino(bool cw)
 {
-	if (!m_currentMinoActor)
-		return false;
+	SP_ASSERT(m_boardActor != nullptr);
+	SP_ASSERT(m_currentMinoActor != nullptr);
 
 	bool ret = false;
 
@@ -312,6 +314,9 @@ bool TetrisGameMode::TryHoldMino()
 	if (m_bHasHeldThisTurn)
 		return false;
 
+	SP_ASSERT(m_boardActor != nullptr);
+	SP_ASSERT(m_currentMinoActor != nullptr);
+
 	if (m_holdMinoType == TetrominoType::None)
 	{
 		// 처음 홀드
@@ -347,11 +352,8 @@ bool TetrisGameMode::TryHoldMino()
 
 bool TetrisGameMode::TryMoveMino(int32 dx, int32 dy)
 {
-	if (!m_currentMinoActor)
-	{
-		__debugbreak();
-		return false;
-	}
+	SP_ASSERT(m_boardActor != nullptr);
+	SP_ASSERT(m_currentMinoActor != nullptr);
 
 	if (m_boardActor->WouldCollideAt(*m_currentMinoActor, dx, dy))
 		return false;
@@ -362,17 +364,20 @@ bool TetrisGameMode::TryMoveMino(int32 dx, int32 dy)
 
 void TetrisGameMode::LockMinoAndProceed()
 {
-	if (!m_currentMinoActor)
-	{
-		__debugbreak();
-	}
+	SP_ASSERT(m_boardActor != nullptr);
+	SP_ASSERT(m_currentMinoActor != nullptr);
 
 	m_boardActor->Lock(*m_currentMinoActor);
 
 	int32 cleared = m_boardActor->ClearFullLines();
 	if (cleared > 0)
 	{
-		GetGameState()->AddScore(cleared * 100);
+		auto* gameState = GetGameState();
+		SP_ENSURE(gameState != nullptr);
+		if (gameState)
+		{
+			gameState->AddScore(cleared * 100);
+		}
 	}
 
 	m_bHasHeldThisTurn = false;

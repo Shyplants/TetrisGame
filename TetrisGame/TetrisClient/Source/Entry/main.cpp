@@ -57,24 +57,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 애플리케이션 초기화를 수행합니다:
     g_hMainWindow = InitInstance(hInstance, nCmdShow);
-
-    if (!g_hMainWindow)
-    {
-        return FALSE;
-    }
+    SP_ASSERT(g_hMainWindow != nullptr);
 
     Engine::Create();
     Engine& engine = Engine::Get();
 
     if (!engine.Init(g_hMainWindow))
     {
-        __debugbreak();
-        return -1;
+        SP_FATAL("Engine initialization failed");
     }
 
     World* world = engine.GetWorld();
-    world->LoadLevel(std::make_unique<TetrisLevel>(world));
+    SP_ASSERT(world != nullptr);
 
+    world->LoadLevel(std::make_unique<TetrisLevel>(world));
 
     MSG msg;
 
@@ -99,7 +95,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    engine.Destroy();
+    Engine::Destroy();
     return (int)msg.wParam;
 }
 
@@ -164,10 +160,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, dwStyle,
         CW_USEDEFAULT, CW_USEDEFAULT, windowWidth, windowHeight, nullptr, nullptr, hInstance, nullptr);
 
-    if (!hWnd)
-    {
-        return nullptr;
-    }
+    SP_ASSERT(hWnd != nullptr);
 
     DisableRoundedCorner(hWnd);
 

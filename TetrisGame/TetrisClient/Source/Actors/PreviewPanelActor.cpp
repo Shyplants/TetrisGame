@@ -14,13 +14,13 @@ PreviewPanelActor::PreviewPanelActor(IVec2 offset)
 {
 }
 
-PreviewPanelActor::~PreviewPanelActor()
-{
-}
+PreviewPanelActor::~PreviewPanelActor() = default;
 
 void PreviewPanelActor::OnSpawned()
 {
-	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/PreviewPanel.png").get();
+	auto panelTexture = ResourceManager::Get().Load<Texture>(L"../Resources/Tetris/PreviewPanel.png");
+	SP_ASSERT(panelTexture != nullptr);
+
 	auto panelWidth = static_cast<float>(panelTexture->GetWidth());
 	auto panelHeight = static_cast<float>(panelTexture->GetHeight());
 
@@ -28,7 +28,9 @@ void PreviewPanelActor::OnSpawned()
 	float offsetY = static_cast<float>(m_offset.y);
 
 	m_panelRenderer = AddComponent<SpriteRendererComponent>();
-	m_panelRenderer->SetTexture(panelTexture);
+	SP_ASSERT(m_panelRenderer != nullptr);
+
+	m_panelRenderer->SetTexture(panelTexture.get());
 	m_panelRenderer->SetPivot(SpritePivot::TopLeft);
 	m_panelRenderer->SetRenderOffset({ offsetX , offsetY });
 
@@ -48,10 +50,14 @@ void PreviewPanelActor::OnSpawned()
 	float previewSpacing = (CELL_SIZE * 2.0f) + (extraSpacing * 2.0f);
 
 	// 미리보기 미노 렌더러(5개)
+	auto tileTexture = ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png");
+	SP_ASSERT(tileTexture);
 	for (int32 i = 0; i < MINO_PREVIEW_COUNT; ++i)
 	{
 		m_previewMinoRenderers[i] = AddComponent<TetrominoRendererComponent>();
-		m_previewMinoRenderers[i]->SetTexture(ResourceManager::Get().Load<Texture>(L"../Resources/TileTexture.png").get());
+		SP_ASSERT(m_previewMinoRenderers[i] != nullptr);
+
+		m_previewMinoRenderers[i]->SetTexture(tileTexture.get());
 		m_previewMinoRenderers[i]->SetRenderMode(ETetrominoRenderMode::UI);
 		m_previewMinoRenderers[i]->SetTetromino(TetrominoType::None);
 		m_previewMinoRenderers[i]->SetRenderOffset({ offsetX , offsetY });
@@ -60,7 +66,7 @@ void PreviewPanelActor::OnSpawned()
 	}
 }
 
-IVec2 PreviewPanelActor::GetRenderOffset()
+IVec2 PreviewPanelActor::GetRenderOffset() const
 {
 	if (m_panelRenderer)
 	{

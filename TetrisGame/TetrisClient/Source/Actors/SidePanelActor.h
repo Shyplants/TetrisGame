@@ -18,7 +18,7 @@ public:
 	int32 GetPanelWidth() const { return m_panelWidth; }
 	int32 GetPanelHeight() const { return m_panelHeight; }
 
-	IVec2 GetRenderOffset();
+	IVec2 GetRenderOffset() const;
 
 private:
 	SpriteRendererComponent* m_panelRenderer{ nullptr };
